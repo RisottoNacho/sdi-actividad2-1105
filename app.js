@@ -11,6 +11,7 @@ app.set('jwt', jwt);
 
 var fs = require('fs');
 var https = require('https');
+var http = require('http');
 
 var expressSession = require('express-session');
 app.use(expressSession({
@@ -175,10 +176,7 @@ app.use(function (err, req, res, next) {
 
 
 // lanzar el servidor
-https.createServer({
-    key: fs.readFileSync('certificates/alice.key'),
-    cert: fs.readFileSync('certificates/alice.crt')
-}, app).listen(app.get('port'), function () {
+http.createServer(app).listen(app.get('port'), function () {
     console.log("Servidor activo");
 });
 /*
