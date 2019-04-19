@@ -1,4 +1,4 @@
-module.exports = function (app, swig, gestorBD) {
+module.exports = function (app, swig, gestorBD, registerValidator) {
     app.get("/usuarios", function (req, res) {
         res.send("ver usuarios");
     });
@@ -13,16 +13,24 @@ module.exports = function (app, swig, gestorBD) {
             .update(req.body.password).digest('hex');
         var usuario = {
             email: req.body.email,
+            name: req.body.name,
+            surname: req.body.surname,
+            money: 100,
             password: seguro
-        }
-        gestorBD.insertarUsuario(usuario, function (id) {
-            if (id == null) {
-                res.redirect("/registrarse?mensaje=Error al registrar usuario");
+        };
+        registerValidator.validate(usuario, gestorBD, req.body.password, req.body.confirmPassword, function (message) {
+            if (message.localeCompare("") == 0) {
+                gestorBD.insertarUsuario(usuario, function (id) {
+                    if (id == null) {
+                        res.redirect("/registrarse?mensaje=Error del servidor al registrar usuario");
+                    } else {
+                        res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
+                    }
+                });
             } else {
-                res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
+                res.redirect("/registrarse?mensaje=" + message + "&tipoMensaje=alert-danger");
             }
-        });
-
+        })
     });
 
     app.get("/identificarse", function (req, res) {
