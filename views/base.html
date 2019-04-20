@@ -29,8 +29,10 @@
                 <li id="mPublicaciones"><a href="/publicaciones">Publicaciones</a></li>
                 <li id="mCompras"><a href="/compras">Compras</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {{txt}}
+            <ul id="logNav" class="nav navbar-nav navbar-right">
+                {% if shito%}
+                <li><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
+                {%endif%}
             </ul>
         </div>
     </div>
@@ -40,7 +42,6 @@
 <div class="container">
 
     <script>
-
         var mensaje = getUrlParameter('mensaje');
         var tipoMensaje = getUrlParameter('tipoMensaje');
         if (mensaje != "") {

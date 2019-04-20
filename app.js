@@ -150,19 +150,27 @@ app.use("/cancion/eliminar", routerUsuarioAutor);
 var routerNav = express.Router();
 routerNav.use(function (req, res, next) {
     console.log("routerNav");
-    if (req.session == null)
-        swig.renderFile("views/base.html", {
-            txt: "<li><a href=\"/registrarse\"><span class=\"glyphicon glyphicon-user\"></span> Registrate</a></li>\n" +
-                "                <li><a href=\"/identificarse\"><span class=\"glyphicon glyphicon-log-in\"></span> Identifícate</a></li>"
-        });
-    else
-        swig.renderFile("views/base.html", {
-            txt: "<li><a href=\"/desconectarse\"><span class=\"glyphicon glyphicon-log-in\"></span> Desconectar</a></li>"
-        });
+    var base = require('./views/base.html');
+    if (req.session.usuario) {
+        base.getElementById("logNav").appendChild("<li><a href=\"/desconectarse\"><span class=\"glyphicon glyphicon-log-in\"></span> Desconectar</a></li>");
+    } else
+        base.getElementById("logNav").appendChild("<li><a href=\"/registrarse\"><span class=\"glyphicon glyphicon-user\"></span> Registrate</a></li>" +
+            "                <li><a href=\"/identificarse\"><span class=\"glyphicon glyphicon-log-in\"></span> Identifícate</a></li>");
+    next();
 });
 
-app.use(routerNav);
+//app.use(routerNav);
 
+
+
+app.use('shito',function(req, res, next){
+    // all the stuff from the example
+    if (req.session.usuario) {
+        res.locals.usuario = req.session.user
+    }
+    return req.session.usuario;
+    next();
+});
 
 app.use(express.static('public'));
 // Variables
