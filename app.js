@@ -147,6 +147,22 @@ routerUsuarioAutor.use(function (req, res, next) {
 app.use("/cancion/modificar", routerUsuarioAutor);
 app.use("/cancion/eliminar", routerUsuarioAutor);
 
+var routerNav = express.Router();
+routerNav.use(function (req, res, next) {
+    console.log("routerNav");
+    if (req.session == null)
+        swig.renderFile("views/base.html", {
+            txt: "<li><a href=\"/registrarse\"><span class=\"glyphicon glyphicon-user\"></span> Registrate</a></li>\n" +
+                "                <li><a href=\"/identificarse\"><span class=\"glyphicon glyphicon-log-in\"></span> Identifícate</a></li>"
+        });
+    else
+        swig.renderFile("views/base.html", {
+            txt: "<li><a href=\"/desconectarse\"><span class=\"glyphicon glyphicon-log-in\"></span> Desconectar</a></li>"
+        });
+});
+
+app.use(routerNav);
+
 
 app.use(express.static('public'));
 // Variables

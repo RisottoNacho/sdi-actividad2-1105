@@ -30,8 +30,7 @@
                 <li id="mCompras"><a href="/compras">Compras</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
-                <li><a href="/identificarse"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+                {{txt}}
             </ul>
         </div>
     </div>
@@ -41,15 +40,17 @@
 <div class="container">
 
     <script>
+
         var mensaje = getUrlParameter('mensaje');
         var tipoMensaje = getUrlParameter('tipoMensaje');
-        if ( mensaje != ""){
-            if (tipoMensaje == "" ){
+        if (mensaje != "") {
+            if (tipoMensaje == "") {
                 tipoMensaje = 'alert-info';
             }
-            $( ".container" )
-                .append("<div class='alert "+tipoMensaje+"'>"+mensaje+" </div>");
+            $(".container")
+                .append("<div class='alert " + tipoMensaje + "'>" + mensaje + " </div>");
         }
+
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
