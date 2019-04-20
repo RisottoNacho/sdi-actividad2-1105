@@ -24,7 +24,6 @@ var fileUpload = require('express-fileupload');
 app.use(fileUpload());
 var swig = require('swig');
 var mongo = require('mongodb');
-var registerValidator = require('./modules/RegisterValidator.js');
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -157,7 +156,7 @@ app.set('clave', 'abcdefg');
 app.set('crypto', crypto);
 
 //Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app, swig, gestorBD, registerValidator); // (app, param1, param2, etc.)
+require("./routes/rusuarios.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rcanciones.js")(app, swig, gestorBD); // (app, param1, param2, etc.)
 require("./routes/rapicanciones.js")(app, gestorBD);
 
