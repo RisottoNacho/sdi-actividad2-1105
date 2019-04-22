@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %} Listado usuarios {% endblock %}
+
+{% block contenido_principal %}
+<div class="container">
+    <h2>Usuarios</h2>
+    <p>Los usuarios que actualmente
+        figuran en el sistema son los siguientes:</p>
+    <form>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th class="col-md-1">Seleccionar</th>
+                    <th class="col-md-3">Email</th>
+                    <th class="col-md-3">Nombre</th>
+                    <th class="col-md-3">Apellidos</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in lsusers %}
+                <tr id={{user.email}}>
+                    <td align="center"><input type="checkbox"/></td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.surname}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" value="delete"
+                    class='btn btn-primary btn-sm'
+                    data-placement="right">Borrar
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

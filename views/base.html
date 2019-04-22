@@ -30,6 +30,9 @@
                 <li id="mPublicaciones"><a href="/publicaciones">Publicaciones</a></li>
                 <li id="mCompras"><a href="/compras">Compras</a></li>
                 {%endif%}
+                {% if role == 'admin'%}
+                <li id="mUsers" class="active"><a href="/usuarios">Usuarios</a></li>
+                {%endif%}
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
                 {% if user%}

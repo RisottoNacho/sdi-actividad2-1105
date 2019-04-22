@@ -1,7 +1,11 @@
 module.exports = function (app, swig, gestorBD) {
 
     app.get("/usuarios", function (req, res) {
-        res.send("ver usuarios");
+        gestorBD.obtenerUsuarios({},function (users) {
+            var params = [];
+            params['lsusers'] = users;
+            res.send(globalRender('views/busuarios.html', params, req.session));
+        });
     });
 
     app.get("/registrarse", function (req, res) {
