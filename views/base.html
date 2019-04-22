@@ -30,8 +30,12 @@
                 <li id="mCompras"><a href="/compras">Compras</a></li>
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
-                {% if shito%}
+                {% if user%}
+                <li><a href="/desconectarse"><span class="glyphicon glyphicon-log-out"></span> Desconectar</a></li>
+                {%endif%}
+                {% if user == null%}
                 <li><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
+                <li><a href="/identificarse"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
                 {%endif%}
             </ul>
         </div>

@@ -5,8 +5,8 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get("/registrarse", function (req, res) {
-        var respuesta = swig.renderFile('views/bregistro.html', {});
-        res.send(respuesta);
+        var params={};
+        res.send(globalRender('views/bregistro.html',params,req.session));
     });
 
     app.post('/usuario', function (req, res) {
@@ -39,7 +39,8 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get("/identificarse", function (req, res) {
-        var respuesta = swig.renderFile('views/bidentificacion.html', {});
+        var params={};
+        var respuesta = globalRender('views/bidentificacion.html',params,req.session);
         res.send(respuesta);
     });
 
@@ -58,15 +59,21 @@ module.exports = function (app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
-                res.redirect("/publicaciones");
+                var params={};
+                res.send(globalRender('views/bpublicaciones.html',params,req.session));
             }
         });
     });
 
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
-        res.redirect("/identificarse");
+        var params={};
+        res.send(globalRender('views/bidentificacion.html',params,req.session));
     });
 
+    function globalRender(ruta, parametros, sesion){
+        parametros['user']=sesion.usuario;
+        return swig.renderFile(ruta,parametros);
+    }
 
 };
