@@ -9,7 +9,6 @@ app.set('rest', rest);
 var jwt = require('jsonwebtoken');
 app.set('jwt', jwt);
 
-var fs = require('fs');
 var https = require('https');
 var http = require('http');
 

@@ -25,9 +25,11 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
+                {% if role != 'admin'%}
                 <li id="mTienda" class="active"><a href="/tienda">Tienda</a></li>
                 <li id="mPublicaciones"><a href="/publicaciones">Publicaciones</a></li>
                 <li id="mCompras"><a href="/compras">Compras</a></li>
+                {%endif%}
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
                 {% if user%}

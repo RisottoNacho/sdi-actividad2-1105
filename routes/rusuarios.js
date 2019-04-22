@@ -5,8 +5,8 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get("/registrarse", function (req, res) {
-        var params={};
-        res.send(globalRender('views/bregistro.html',params,req.session));
+        var params = [];
+        res.send(globalRender('views/bregistro.html', params, req.session));
     });
 
     app.post('/usuario', function (req, res) {
@@ -15,7 +15,7 @@ module.exports = function (app, swig, gestorBD) {
         if (req.body.password === req.body.confirmPassword) {
             var criterio = {criterio: req.body.email}
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                if (usuarios == null || usuarios.length == 0)
+                if (!(usuarios == null || usuarios.length == 0))
                     res.redirect("/registrarse?mensaje=El email ya está registrado&tipoMensaje=alert-danger");
                 else {
                     var usuario = {
@@ -39,8 +39,8 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get("/identificarse", function (req, res) {
-        var params={};
-        var respuesta = globalRender('views/bidentificacion.html',params,req.session);
+        var params = [];
+        var respuesta = globalRender('views/bidentificacion.html', params, req.session);
         res.send(respuesta);
     });
 
@@ -59,21 +59,28 @@ module.exports = function (app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
-                var params={};
-                res.send(globalRender('views/bpublicaciones.html',params,req.session));
+                var params = [];
+                if (usuarios[0].email == "admin@email.com") {
+                    req.session.role = 'admin';
+                    res.send(globalRender('views/busuarios.html', params, req.session));
+                } else {
+                    req.session.role = 'standardUser';
+                    res.send(globalRender('views/bpublicaciones.html', params, req.session));
+                }
             }
         });
     });
 
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
-        var params={};
-        res.send(globalRender('views/bidentificacion.html',params,req.session));
+        var params = [];
+        res.send(globalRender('views/bidentificacion.html', params, req.session));
     });
 
-    function globalRender(ruta, parametros, sesion){
-        parametros['user']=sesion.usuario;
-        return swig.renderFile(ruta,parametros);
+    function globalRender(route, params, session) {
+        params['user'] = session.usuario;
+        params['role'] = session.role;
+        return swig.renderFile(route, params);
     }
 
 };
