@@ -19,7 +19,7 @@ module.exports = function (app, swig, gestorBD) {
         var seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         if (req.body.password === req.body.confirmPassword) {
-            var criterio = {criterio: req.body.email}
+            var criterio = {criterio: req.body.email};
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                 if (!(usuarios == null || usuarios.length == 0))
                     res.redirect("/registrarse?mensaje=El email ya está registrado&tipoMensaje=alert-danger");
@@ -48,6 +48,20 @@ module.exports = function (app, swig, gestorBD) {
         var params = [];
         var respuesta = lib.globalRender('views/bidentificacion.html', params, req.session);
         res.send(respuesta);
+    });
+
+    app.post("/delete", function (req, res) {
+        var lsDel = req.body.toDelete;
+        if (!(lsDel == null || lsDel == 0)) {
+            gestorBD.eliminarUsuario(req.body.toDelete, function () {
+                gestorBD.obtenerUsuarios({}, function (users) {
+                    console.log()
+                    var params = [];
+                    params['lsusers'] = users;
+                    res.send(lib.globalRender('views/busuarios.html', params, req.session));
+                });
+            });
+        }
     });
 
     app.post("/identificarse", function (req, res) {

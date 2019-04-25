@@ -21,7 +21,7 @@
                 <tbody>
                 {% for user in lsusers %}
                 <tr id={{user.email}}>
-                    <td align="center"><input type="checkbox"/></td>
+                    <td align="center"><input id="cb{{user.email}}" name="cb" type="checkbox"/></td>
                     <td>{{user.email}}</td>
                     <td>{{user.name}}</td>
                     <td>{{user.surname}}</td>
@@ -29,10 +29,21 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <button type="submit" value="delete"
+            <button href="/delete" onclick="deleteBt()"
                     class='btn btn-primary btn-sm'
                     data-placement="right">Borrar
             </button>
+            <script>
+                function deleteBt() {
+                    var ls = document.getElementsByName("cb");
+                    var toDelete = [];
+                    ls.forEach(function (item) {
+                        if (item.checked)
+                            toDelete.push(item);
+                    });
+                    return toDelete;
+                }
+            </script>
         </div>
     </form>
 </div>
