@@ -3,7 +3,7 @@ var lib = require('./lib.js');
 module.exports = function (app, swig, gestorBD) {
 
     app.get("/usuarios", function (req, res) {
-        gestorBD.obtenerUsuarios({},function (users) {
+        gestorBD.obtenerUsuarios({}, function (users) {
             var params = [];
             params['lsusers'] = users;
             res.send(lib.globalRender('views/busuarios.html', params, req.session));
@@ -67,8 +67,11 @@ module.exports = function (app, swig, gestorBD) {
                 req.session.usuario = usuarios[0].email;
                 var params = [];
                 if (usuarios[0].email == "admin@email.com") {
-                    req.session.role = 'admin';
-                    res.send(lib.globalRender('views/busuarios.html', params, req.session));
+                    gestorBD.obtenerUsuarios({}, function (users) {
+                        params['lsusers'] = users;
+                        req.session.role = 'admin';
+                        res.send(lib.globalRender('views/busuarios.html', params, req.session));
+                    });
                 } else {
                     req.session.role = 'standardUser';
                     res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
