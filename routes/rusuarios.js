@@ -1,16 +1,18 @@
+var lib = require('./lib.js');
+
 module.exports = function (app, swig, gestorBD) {
 
     app.get("/usuarios", function (req, res) {
         gestorBD.obtenerUsuarios({},function (users) {
             var params = [];
             params['lsusers'] = users;
-            res.send(globalRender('views/busuarios.html', params, req.session));
+            res.send(lib.globalRender('views/busuarios.html', params, req.session));
         });
     });
 
     app.get("/registrarse", function (req, res) {
         var params = [];
-        res.send(globalRender('views/bregistro.html', params, req.session));
+        res.send(lib.globalRender('views/bregistro.html', params, req.session));
     });
 
     app.post('/usuario', function (req, res) {
@@ -44,7 +46,7 @@ module.exports = function (app, swig, gestorBD) {
 
     app.get("/identificarse", function (req, res) {
         var params = [];
-        var respuesta = globalRender('views/bidentificacion.html', params, req.session);
+        var respuesta = lib.globalRender('views/bidentificacion.html', params, req.session);
         res.send(respuesta);
     });
 
@@ -66,10 +68,10 @@ module.exports = function (app, swig, gestorBD) {
                 var params = [];
                 if (usuarios[0].email == "admin@email.com") {
                     req.session.role = 'admin';
-                    res.send(globalRender('views/busuarios.html', params, req.session));
+                    res.send(lib.globalRender('views/busuarios.html', params, req.session));
                 } else {
                     req.session.role = 'standardUser';
-                    res.send(globalRender('views/bpublicaciones.html', params, req.session));
+                    res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
                 }
             }
         });
@@ -78,13 +80,7 @@ module.exports = function (app, swig, gestorBD) {
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
         var params = [];
-        res.send(globalRender('views/bidentificacion.html', params, req.session));
+        res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
     });
-
-    function globalRender(route, params, session) {
-        params['user'] = session.usuario;
-        params['role'] = session.role;
-        return swig.renderFile(route, params);
-    }
 
 };
