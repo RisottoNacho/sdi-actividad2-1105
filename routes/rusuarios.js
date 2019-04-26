@@ -55,7 +55,7 @@ module.exports = function (app, swig, gestorBD) {
         if (!(lsDel == null || lsDel == 0)) {
             gestorBD.eliminarUsuario(req.body.toDelete, function () {
                 gestorBD.obtenerUsuarios({}, function (users) {
-                    console.log()
+                    console.log(lsDel);
                     var params = [];
                     params['lsusers'] = users;
                     res.send(lib.globalRender('views/busuarios.html', params, req.session));

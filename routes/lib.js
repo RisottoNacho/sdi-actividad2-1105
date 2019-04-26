@@ -8,4 +8,4 @@ function globalRender(route, params, session) {
 
 module.exports = {
     globalRender: globalRender
-}
+};
