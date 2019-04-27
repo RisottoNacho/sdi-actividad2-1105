@@ -164,13 +164,15 @@ app.get('/', function (req, res) {
     res.redirect('/tienda');
 });
 
-app.use(function (err, req, res, next) {
+// IMPORTANTE MANEJO DE ERRORES
+
+/*app.use(function (err, req, res, next) {
     console.log("Error producido: " + err); //we log the error in our db
     if (!res.headersSent) {
         res.status(400);
         res.send("Recurso no disponible");
     }
-});
+});*/
 
 
 // lanzar el servidor

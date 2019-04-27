@@ -7,7 +7,7 @@
     <h2>Usuarios</h2>
     <p>Los usuarios que actualmente
         figuran en el sistema son los siguientes:</p>
-    <form>
+    <form action="/delete" method="post" id="formUsers">
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -20,8 +20,8 @@
                 </thead>
                 <tbody>
                 {% for user in lsusers %}
-                <tr id={{user.email}}>
-                    <td align="center"><input id="cb{{user.email}}" name="cb" type="checkbox"/></td>
+                <tr id=row{{user.email}}>
+                    <td align="center"><input id="cb{{user.email}}" name="cb" type="checkbox" value="{{user._id.toString()}}"/></td>
                     <td>{{user.email}}</td>
                     <td>{{user.name}}</td>
                     <td>{{user.surname}}</td>
@@ -29,21 +29,9 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <button href="/delete" onclick="deleteBt()"
-                    class='btn btn-primary btn-sm'
-                    data-placement="right">Borrar
-            </button>
-            <script>
-                function deleteBt() {
-                    var ls = document.getElementsByName("cb");
-                    var toDelete = [];
-                    ls.forEach(function (item) {
-                        if (item.checked)
-                            toDelete.push(item);
-                    });
-                    return toDelete;
-                }
-            </script>
+
+            <button type="submit" form="formUsers" class="btn btn-primary">Borrar Seleccionados</button>
+
         </div>
     </form>
 </div>

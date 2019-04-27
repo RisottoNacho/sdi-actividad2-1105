@@ -1,22 +1,22 @@
-var lib = require('./lib.js');
+const lib = require('./lib.js');
 
 module.exports = function (app, swig, gestorBD) {
 
     app.get("/usuarios", function (req, res) {
         gestorBD.obtenerUsuarios({}, function (users) {
-            var params = [];
+            const params = [];
             params['lsusers'] = users;
             res.send(lib.globalRender('views/busuarios.html', params, req.session));
         });
     });
 
     app.get("/registrarse", function (req, res) {
-        var params = [];
+        let params = [];
         res.send(lib.globalRender('views/bregistro.html', params, req.session));
     });
 
     app.post('/usuario', function (req, res) {
-        var seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
+        let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         if (req.body.password === req.body.confirmPassword) {
             var criterio = {criterio: req.body.email};
@@ -24,7 +24,7 @@ module.exports = function (app, swig, gestorBD) {
                 if (!(usuarios == null || usuarios.length == 0))
                     res.redirect("/registrarse?mensaje=El email ya está registrado&tipoMensaje=alert-danger");
                 else {
-                    var usuario = {
+                    let usuario = {
                         email: req.body.email,
                         name: req.body.name,
                         surname: req.body.surname,
@@ -45,18 +45,30 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get("/identificarse", function (req, res) {
-        var params = [];
-        var respuesta = lib.globalRender('views/bidentificacion.html', params, req.session);
-        res.send(respuesta);
+        let params = [];
+        res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
     });
 
     app.post("/delete", function (req, res) {
-        var lsDel = req.body.toDelete;
-        if (!(lsDel == null || lsDel == 0)) {
-            gestorBD.eliminarUsuario(req.body.toDelete, function () {
+        let aux;
+        if (!Array.isArray(req.body.cb)) {
+            aux = [];
+            aux.push(req.body.cb)
+        } else {
+            aux = req.body.cb;
+        }
+        let lsDel = [];
+        for(let index in aux){
+            let id = aux[index];
+            lsDel.push(gestorBD.mongo.ObjectId(id));
+        }
+        const criterio = {
+            "_id": {$in: lsDel}
+        };
+        if (!(lsDel == null || lsDel.length == 0)) {
+            gestorBD.eliminarUsuario(criterio, function () {
                 gestorBD.obtenerUsuarios({}, function (users) {
-                    console.log(lsDel);
-                    var params = [];
+                    let params = [];
                     params['lsusers'] = users;
                     res.send(lib.globalRender('views/busuarios.html', params, req.session));
                 });
@@ -65,12 +77,12 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.post("/identificarse", function (req, res) {
-        var seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
+        let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
-        var criterio = {
+        let criterio = {
             email: req.body.email,
             password: seguro
-        }
+        };
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null || usuarios.length == 0) {
                 req.session.usuario = null;
@@ -96,7 +108,7 @@ module.exports = function (app, swig, gestorBD) {
 
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
-        var params = [];
+        let params = [];
         res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
     });
 
