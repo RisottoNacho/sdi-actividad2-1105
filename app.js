@@ -76,14 +76,13 @@ routerUsuarioToken.use(function (req, res, next) {
 app.use('/api/cancion', routerUsuarioToken);
 
 // routerUsuarioSession
-var routerUsuarioSession = express.Router();
+let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
     console.log("routerUsuarioSession");
-    if (req.session.usuario) {
+    if (req.session.usuario && req.session.usuario != "admin@email.com") {
         // dejamos correr la petición
         next();
     } else {
-        console.log("va a : " + req.session.destino)
         res.redirect("/identificarse");
     }
 });
@@ -92,7 +91,35 @@ app.use("/canciones/agregar", routerUsuarioSession);
 app.use("/publicaciones", routerUsuarioSession);
 app.use("/cancion/comprar", routerUsuarioSession);
 app.use("/compras", routerUsuarioSession);
-app.use("/desconectarse", routerUsuarioSession);
+
+// routerUsuario
+let routerUsuario = express.Router();
+routerUsuario.use(function (req, res, next) {
+    console.log("routerUsuario");
+    if (req.session.usuario) {
+        // dejamos correr la petición
+        next();
+    } else {
+        res.redirect("/identificarse");
+    }
+});
+//Aplicar routerUsuarioSession
+app.use("/desconectarse", routerUsuario);
+
+// routeradmin
+let routerAdminSession = express.Router();
+routerAdminSession.use(function (req, res, next) {
+    console.log("routeradmin");
+    if (req.session.usuario && req.session.usuario == "admin@email.com") {
+        // dejamos correr la petición
+        next();
+    } else {
+        res.redirect("/identificarse");
+    }
+});
+//Aplicar routeradmin
+
+app.use("/usuarios", routerAdminSession);
 
 
 //routerAudios
