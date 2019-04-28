@@ -35,4 +35,9 @@
     <p>El precio debe ser un valor positivo</p>
 </div>
 {% endif %}
+{%if errorServer%}
+<div class="alert alert-danger" role="alert">
+    <p>Error del servidor</p>
+</div>
+{% endif %}
 {% endblock %}

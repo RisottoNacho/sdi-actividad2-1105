@@ -92,8 +92,8 @@ module.exports = function (app, swig, gestorBD) {
             // Conectarse
             gestorBD.insertarOferta(oferta, function (id) {
                 if (id == null) {
-                    res.send(lib.globalRender('views/bagregar.html', params, req.session) + "?mensaje=Error del servidor" +
-                        "&tipoMensaje=alert-danger ");
+                    params['errorServer'] = true;
+                    res.send(lib.globalRender('views/bagregar.html', params, req.session));
                 } else {
                     res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
                 }
