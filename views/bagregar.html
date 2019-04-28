@@ -1,48 +1,27 @@
 {% extends "base.html" %}
 {% block titulo %} Agregar canción {% endblock %}
 {% block contenido_principal %}
-<h2>Agregar canción</h2>
-<form class="form-horizontal" method="post" action="/cancion"  encType="multipart/form-data">
+<h2>Agregar oferta</h2>
+<form class="form-horizontal" method="post" action="/oferta" encType="multipart/form-data">
     <div class="form-group">
-        <label class="control-label col-sm-2" for="nombre">Nombre:</label>
+        <label class="control-label col-sm-2" for="titulo">Título:</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" name="nombre"
-                   placeholder="Nombre de mi canción" required="true" />
+            <input type="text" class="form-control" name="titulo"
+                   placeholder="Título de la oferta" required="true"/>
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-sm-2" for="genero">Genero:</label>
+        <label class="control-label col-sm-2" for="descripcion">Descripcion:</label>
         <div class="col-sm-10">
-            <select class="form-control" name="genero" required="true">
-                <option value="pop">Pop</option>
-                <option value="folk">Folk</option>
-                <option value="rock">Rock</option>
-                <option value="reagge">Reagge</option>
-                <option value="rap">Hip-hop Rap</option>
-                <option value="latino">Latino</option>
-                <option value="blues">Blues</option>
-                <option value="otros">Otros</option>
-            </select>
+            <input type="text" class="form-control" name="descripcion"
+                   placeholder="Descripción de la oferta" required="true"/>
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-2" for="precio">Precio (€):</label>
         <div class="col-sm-10">
             <input type="number" class="form-control" name="precio"
-                   placeholder="2.50" required="true" />
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="portada">Imagen portada:</label>
-        <div class="col-sm-10">
-            <input type="file" class="custom-file-input" name="portada" accept=".png" required/>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="audio">Fichero audio:</label>
-        <div class="col-sm-10">
-            <input type="file" class="custom-file-input" name="audio" accept=".mp3" required
-            />
+                   placeholder="2.50" required="true"/>
         </div>
     </div>
     <div class="form-group">
@@ -51,4 +30,9 @@
         </div>
     </div>
 </form>
+{%if error%}
+<div class="alert alert-danger" role="alert">
+    <p>El precio debe ser un valor positivo</p>
+</div>
+{% endif %}
 {% endblock %}

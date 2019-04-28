@@ -128,7 +128,7 @@ routerAudios.use(function (req, res, next) {
     console.log("routerAudios");
     var path = require('path');
     var idCancion = path.basename(req.originalUrl, '.mp3');
-    gestorBD.obtenerCanciones(
+    gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(idCancion)}, function (canciones) {
             if (req.session.usuario && canciones[0].autor == req.session.usuario) {
                 next();
@@ -160,7 +160,7 @@ routerUsuarioAutor.use(function (req, res, next) {
     var id = path.basename(req.originalUrl);
 // Cuidado porque req.params no funciona
 // en el router si los params van en la URL.
-    gestorBD.obtenerCanciones(
+    gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id)}, function (canciones) {
             console.log(canciones[0]);
             if (canciones[0].autor == req.session.usuario) {

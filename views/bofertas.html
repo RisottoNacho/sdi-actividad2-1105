@@ -1,0 +1,60 @@
+{% extends "base.html" %} {% block titulo %} Mis publicaciones {% endblock %}
+
+{% block contenido_principal %}
+<div class="container">
+    <h2>Lista de ofertas disponibles</h2>
+    <div class="row">
+        <div id="custom-search-input ">
+            <form method="get" action="/tienda">
+                <div
+                        class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-left">
+                    <input type="text" class="search-query form-control"
+                           placeholder="Busca una oferta" name="busqueda"/>
+                    <span class="input-group-btn">
+						<button class="btn" type="submit">
+							<span class="glyphicon glyphicon-search"></span>
+						</button>
+					</span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Agregar Canción -->
+    </strong><strong><p>Lista de ofertas</p></strong>
+    <div class="table-responsive">
+        <table class="table table-hover"
+               id="tableOffers">
+            <thead>
+            <tr>
+                <th class="col-md-2">Título</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Vendedor</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="offer : ${offerList}">
+                <td th:text="${offer.title}"></td>
+                <td th:text="${offer.description}"></td>
+                <td th:text="${offer.price}"></td>
+                <td th:text="${offer.user.name +' '+offer.user.lastName}"></td>
+                <td th:if="${money >= offer.price}"><a
+                        th:if="!${offer.buyed}"
+                        th:href="${'/offer/buy/' + offer.id+'-'+page.getNumber()}"
+                        th:id="${'buy-'+offer.title+'-'+offer.user.email}"><span
+                        th:text="#{Offers.list.buy}"></span></a></td>
+                <th th:unless="${money >= offer.price}"><a
+                        th:if="!${offer.buyed}"><span
+                        th:text="#{Offers.list.noMoney}"></span></a></th>
+                <th><a th:if="${offer.buyed}"><span
+                        th:text="#{Offers.list.sold}"></span></a></th>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -26,9 +26,9 @@
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 {% if role != 'admin'%}
-                <li id="mTienda"><a href="/tienda">Tienda</a></li>
-                <li id="mPublicaciones"><a href="/publicaciones">Publicaciones</a></li>
-                <li id="mCompras"><a href="/compras">Compras</a></li>
+                <li id="mPublicaciones"><a href="/publicaciones">Mis Ofertas</a></li>
+                <li id="mCompras"><a href="/ofertas">Comprar Ofertas</a></li>
+                <li id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
                 {%endif%}
                 {% if role == 'admin'%}
                 <li id="mUsers" ><a href="/usuarios">Usuarios</a></li>

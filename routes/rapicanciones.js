@@ -1,7 +1,7 @@
 module.exports = function (app, gestorBD) {
 
     app.get("/api/cancion", function (req, res) {
-        gestorBD.obtenerCanciones({}, function (canciones) {
+        gestorBD.obtenerOfertas({}, function (canciones) {
             if (canciones == null) {
                 res.status(500);
                 res.json({
@@ -17,7 +17,7 @@ module.exports = function (app, gestorBD) {
     app.get("/api/cancion/:id", function (req, res) {
         var criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
 
-        gestorBD.obtenerCanciones(criterio, function (canciones) {
+        gestorBD.obtenerOfertas(criterio, function (canciones) {
             if (canciones == null) {
                 res.status(500);
                 res.json({
@@ -33,7 +33,7 @@ module.exports = function (app, gestorBD) {
     app.delete("/api/cancion/:id", function (req, res) {
         var criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
 
-        gestorBD.eliminarCancion(criterio, function (canciones) {
+        gestorBD.eliminarOferta(criterio, function (canciones) {
             if (canciones == null) {
                 res.status(500);
                 res.json({
@@ -53,7 +53,7 @@ module.exports = function (app, gestorBD) {
             precio: req.body.precio,
         }
         // ¿Validar nombre, genero, precio?
-        gestorBD.insertarCancion(cancion, function (id) {
+        gestorBD.insertarOferta(cancion, function (id) {
             if (id == null) {
                 res.status(500);
                 res.json({
@@ -81,7 +81,7 @@ module.exports = function (app, gestorBD) {
             cancion.genero = req.body.genero;
         if (req.body.precio != null)
             cancion.precio = req.body.precio;
-        gestorBD.modificarCancion(criterio, cancion, function (result) {
+        gestorBD.modificarOferta(criterio, cancion, function (result) {
             if (result == null) {
                 res.status(500);
                 res.json({
