@@ -1,7 +1,7 @@
 const lib = require('./lib.js');
 
 module.exports = function (app, swig, gestorBD) {
-    
+
     app.get("/ofertas", function (req, res) {
         let criterio = {};
         if (req.query.busqueda != null) {
