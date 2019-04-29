@@ -22,7 +22,7 @@ module.exports = function (app, swig, gestorBD) {
     app.get("/ofertas", function (req, res) {
         var criterio = {};
         if (req.query.busqueda != null) {
-            criterio = {"title": {$regex: ".*" + req.query.busqueda + ".*", $options:'i'}};
+            criterio = {"title": {$regex: ".*" + req.query.busqueda + ".*", $options: 'i'}};
         }
         let pg = parseInt(req.query.pg); // Es String !!!
         if (req.query.pg == null) { // Puede no venir el param
@@ -46,7 +46,7 @@ module.exports = function (app, swig, gestorBD) {
                 params['lsOfertas'] = ofertas;
                 params['paginas'] = paginas;
                 params['actual'] = pg;
-                res.send(lib.globalRender("views/bofertas.html",params,req.session));
+                res.send(lib.globalRender("views/bofertas.html", params, req.session));
             }
         });
 
@@ -80,18 +80,17 @@ module.exports = function (app, swig, gestorBD) {
             title: req.body.titulo,
             description: req.body.descripcion,
             price: req.body.precio,
-            autor: req.session.usuario
+            autor: req.session.usuario,
+            date: new Date(Date.now()),
+            sold: false
         };
         if (oferta.price < 0) {
-            params['error'] = true;
-            res.send(lib.globalRender('views/bagregar.html', params, req.session));
-        }
-        else {
+            res.redirect("/ofertas/agregar?mensaje=El precio debe tener un valor positivo&tipoMensaje=alert-danger")
+        } else {
             // Conectarse
             gestorBD.insertarOferta(oferta, function (id) {
                 if (id == null) {
-                    params['errorServer'] = true;
-                    res.send(lib.globalRender('views/bagregar.html', params, req.session));
+                    res.redirect("/ofertas/agregar?mensaje=Error del servidor&tipoMensaje=alert-danger")
                 } else {
                     res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
                 }
@@ -102,17 +101,35 @@ module.exports = function (app, swig, gestorBD) {
         res.send('Respuesta patrón promo* ');
     });
 
-    app.get('/cancion/comprar/:id', function (req, res) {
-        var cancionId = gestorBD.mongo.ObjectID(req.params.id);
-        var compra = {
+    app.get('/oferta/comprar/:id/:price', function (req, res) {
+        let ofertaId = gestorBD.mongo.ObjectID(req.params.id);
+        let price = req.params.price;
+        let compra = {
             usuario: req.session.usuario,
-            cancionId: cancionId
+            ofertaId: ofertaId
+        };
+        if (price < 0 || req.session.money - price < 0) {
+            alert("Wait, that's illegal");
+            res.redirect("/desconectarse");
         }
-        gestorBD.insertarCompra(compra, function (idCompra) {
-            if (idCompra == null) {
-                res.send(respuesta);
-            } else {
-                res.redirect("/compras");
+        req.session.money = req.session.money - price;
+        gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {
+            if (oferta == null)
+                res.send("Error del servidor");
+            else {
+                gestorBD.modificarUsuario({email: req.session.usuario}, req.session.money, function (oferta) {
+                    if (oferta == null)
+                        res.send("Error del servidor");
+                    else {
+                        gestorBD.insertarCompra(compra, function (idCompra) {
+                            if (idCompra == null) {
+                                res.send("Error del servidor");
+                            } else {
+                                res.redirect("/ofertas");
+                            }
+                        });
+                    }
+                });
             }
         });
     });

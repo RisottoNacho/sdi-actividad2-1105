@@ -22,7 +22,7 @@ module.exports = function (app, swig, gestorBD) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         if (req.body.password === req.body.confirmPassword) {
-            var criterio = {criterio: req.body.email};
+            let criterio = {criterio: req.body.email};
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                 if (!(usuarios == null || usuarios.length == 0))
                     res.redirect("/registrarse?mensaje=El email ya está registrado&tipoMensaje=alert-danger");
@@ -70,14 +70,7 @@ module.exports = function (app, swig, gestorBD) {
                 req.session.money = usuarios[0].money;
                 var params = [];
                 if (usuarios[0].email == "admin@email.com") {
-                    let criterio = {
-                        email: {$ne: "admin@email.com"}
-                    };
-                    gestorBD.obtenerUsuarios(criterio, function (users) {
-                        params['lsusers'] = users;
-                        req.session.role = 'admin';
-                        res.send(lib.globalRender('views/busuarios.html', params, req.session));
-                    });
+                    res.redirect("/usuarios");
                 } else {
                     req.session.role = 'standardUser';
                     res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
@@ -103,16 +96,9 @@ module.exports = function (app, swig, gestorBD) {
         const criterio = {
             "_id": {$in: lsDel}
         };
-        let criterio2 = {
-            email: {$ne: "admin@email.com"}
-        };
         if (!(lsDel == null || lsDel.length == 0)) {
             gestorBD.eliminarUsuario(criterio, function () {
-                gestorBD.obtenerUsuarios(criterio2, function (users) {
-                    let params = [];
-                    params['lsusers'] = users;
-                    res.send(lib.globalRender('views/busuarios.html', params, req.session));
-                });
+                res.redirect("/usuarios");
             });
         }
     });

@@ -1,7 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+<link rel="icon" href="/img/mw.png">
 <head>
-    <title>{% block titulo %} uoMusic {% endblock %}</title>
+    <title>{% block titulo %} MyWallapop {% endblock %}</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
@@ -21,14 +22,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <img src="/img/logo.png" alt="logo"/>
+            <img class="navbar-text" src="/img/mw.png" height="46" width="66" alt="logo"/>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 {% if role != 'admin'%}
-                <li id="mPublicaciones"><a href="/publicaciones">Mis Ofertas</a></li>
-                <li id="mCompras"><a href="/ofertas">Comprar Ofertas</a></li>
-                <li id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
+                <li class="navbar-brand" id="mPublicaciones"><a href="/publicaciones">Mis Ofertas</a></li>
+                <li class="navbar-brand"  id="mCompras"><a href="/ofertas">Comprar Ofertas</a></li>
+                <li class="navbar-brand" id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
                 {%endif%}
                 {% if role == 'admin'%}
                 <li id="mUsers" ><a href="/usuarios">Usuarios</a></li>
@@ -36,12 +37,12 @@
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
                 {% if user%}
-                <li id="userInfo" class="active"><a >{{user}}: {{wallet}}€</a></li>
-                <li><a href="/desconectarse"><span class="glyphicon glyphicon-log-out"></span> Desconectar</a></li>
+                <li class="navbar-brand"  id="userInfo" class="active"><a >{{user}}: {{wallet}}€</a></li>
+                <li class="navbar-brand" ><a href="/desconectarse"><span class="glyphicon glyphicon-log-out"></span> Desconectar</a></li>
                 {%endif%}
                 {% if user == null%}
-                <li><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
-                <li><a href="/identificarse"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+                <li class="navbar-brand" ><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
+                <li class="navbar-brand" ><a href="/identificarse"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
                 {%endif%}
             </ul>
         </div>

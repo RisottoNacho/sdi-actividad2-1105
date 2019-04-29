@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block titulo %} Mis publicaciones {% endblock %}
+{% extends "base.html" %} {% block titulo %}Ofertas {% endblock %}
 
 {% block contenido_principal %}
 <div class="container" >
@@ -36,10 +36,14 @@
                 <td>{{oferta.title}}</td>
                 <td>{{oferta.description}}</td>
                 <td>{{oferta.price}}</td>
+                {% if oferta.sold %}
+                <td>Vendida</td>
+                {% else %}
                 {% if oferta.price <= wallet %}
-                <td><a href="/oferta/comprar/{{oferta._id.toString()}}">Comprar</a></td>
+                <td><a href="/oferta/comprar/{{oferta._id.toString()}}/{{oferta.price}}">Comprar</a></td>
                 {% else %}
                 <td>Saldo insuficiente</td>
+                {% endif %}
                 {% endif %}
             </tr>
             {% endfor %}
