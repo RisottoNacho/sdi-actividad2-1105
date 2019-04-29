@@ -2,7 +2,7 @@ const lib = require('./lib.js');
 
 module.exports = function (app, swig, gestorBD) {
     app.get("/nuevas/canciones", function (req, res) {
-        var canciones = [{
+        let canciones = [{
             "nombre": "Blank space",
             "precio": "1.2"
         }, {
@@ -20,7 +20,7 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get("/ofertas", function (req, res) {
-        var criterio = {};
+        let criterio = {};
         if (req.query.busqueda != null) {
             criterio = {"title": {$regex: ".*" + req.query.busqueda + ".*", $options: 'i'}};
         }
@@ -106,9 +106,6 @@ module.exports = function (app, swig, gestorBD) {
                 }
             });
         }
-    });
-    app.get('/promo*', function (req, res) {
-        res.send('Respuesta patrón promo* ');
     });
 
     app.get('/oferta/comprar/:id/:price', function (req, res) {
