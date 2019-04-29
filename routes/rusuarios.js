@@ -68,7 +68,6 @@ module.exports = function (app, swig, gestorBD) {
             } else {
                 req.session.usuario = usuarios[0].email;
                 req.session.money = usuarios[0].money;
-                var params = [];
                 if (usuarios[0].email == "admin@email.com") {
                     req.session.role = 'admin';
                     res.redirect("/usuarios");

@@ -58,15 +58,22 @@ module.exports = function (app, swig, gestorBD) {
             if (ofertas == null) {
                 res.send("Error al del servidor");
             } else {
-                let soldOffers = [];
-                for (let i = 0; i < ofertas.length; i++) {
-                    if (ofertas[i].autor == req.session.usuario)
-                        soldOffers.push(ofertas[i]);
-                }
-                let params = [];
-                params['lsOfertas'] = ofertas;
-                params['lsOfertasCompradas'] = soldOffers;
-                res.send(lib.globalRender("views/bperfil.html", params, req.session));
+                gestorBD.obtenerCompras({usuario: req.session.usuario}, function (compras) {
+                    if (compras == null)
+                        res.send("Error al del servidor");
+                    else {
+                        let idCompras = [];
+                        for (let i = 0; i < compras.length; i++) {
+                            idCompras.push(compras[i].ofertaId);
+                        }
+                        gestorBD.obtenerOfertas({"_id": {$in: idCompras}}, function (comprasUsuario) {
+                            let params = [];
+                            params['lsOfertas'] = ofertas;
+                            params['lsOfertasCompradas'] = comprasUsuario;
+                            res.send(lib.globalRender("views/bperfil.html", params, req.session));
+                        });
+                    }
+                });
             }
         });
     });
@@ -79,7 +86,6 @@ module.exports = function (app, swig, gestorBD) {
 
     //VALIDAR SIEMPRE EN SEVIDOR
     app.post("/oferta", function (req, res) {
-        let params = [];
         let oferta = {
             title: req.body.titulo,
             description: req.body.descripcion,
@@ -96,7 +102,7 @@ module.exports = function (app, swig, gestorBD) {
                 if (id == null) {
                     res.redirect("/ofertas/agregar?mensaje=Error del servidor&tipoMensaje=alert-danger")
                 } else {
-                    res.send(lib.globalRender('views/bperfil.html', params, req.session));
+                    res.redirect("/perfil");
                 }
             });
         }
@@ -138,145 +144,15 @@ module.exports = function (app, swig, gestorBD) {
         });
     });
 
-
-    app.get('/compras', function (req, res) {
-        var criterio = {"usuario": req.session.usuario};
-        gestorBD.obtenerCompras(criterio, function (compras) {
-            if (compras == null) {
-                res.send("Error al listar ");
+    app.get('/oferta/eliminar/:id', function (req, res) {
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        gestorBD.eliminarOferta(criterio, function (ofertas) {
+            if (ofertas == null) {
+                res.send("Error del servidor");
             } else {
-                var cancionesCompradasIds = [];
-                for (i = 0; i < compras.length; i++) {
-                    cancionesCompradasIds.push(compras[i].cancionId);
-                }
-                var criterio = {"_id": {$in: cancionesCompradasIds}}
-                gestorBD.obtenerOfertas(criterio, function (canciones) {
-                    var respuesta = swig.renderFile('views/bofertas.html',
-                        {
-                            canciones: canciones
-                        });
-                    res.send(respuesta);
-                });
+                res.redirect("/perfil");
             }
         });
-    });
-
-    app.get('/cancion/eliminar/:id', function (req, res) {
-        var criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        gestorBD.eliminarOferta(criterio, function (canciones) {
-            if (canciones == null) {
-                res.send(respuesta);
-            } else {
-                res.redirect("/publicaciones");
-            }
-        });
-    });
-
-
-    app.get('/cancion/modificar/:id', function (req, res) {
-        var criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        gestorBD.obtenerOfertas(criterio, function (canciones) {
-            if (canciones == null) {
-                res.send(respuesta);
-            } else {
-                var respuesta = swig.renderFile('views/bcancionModificar.html',
-                    {
-                        cancion: canciones[0]
-                    });
-                res.send(respuesta);
-            }
-        });
-    });
-
-    app.post('/cancion/modificar/:id', function (req, res) {
-        var id = req.params.id;
-        var criterio = {"_id": gestorBD.mongo.ObjectID(id)};
-        var cancion = {
-            nombre: req.body.nombre,
-            genero: req.body.genero,
-            precio: req.body.precio
-        }
-        gestorBD.modificarOferta(criterio, cancion, function (result) {
-            if (result == null) {
-                res.send("Error al modificar ");
-            } else {
-                paso1ModificarPortada(req.files, id, function (result) {
-                    if (result == null) {
-                        res.send("Error en la modificación");
-                    } else {
-                        res.redirect("/publicaciones");
-                    }
-                });
-
-            }
-        });
-    });
-
-    function paso1ModificarPortada(files, id, callback) {
-        if (files.portada != null) {
-            var imagen = files.portada;
-            imagen.mv('public/portadas/' + id + '.png', function (err) {
-                if (err) {
-                    callback(null); // ERROR
-                } else {
-                    paso2ModificarAudio(files, id, callback); // SIGUIENTE
-                }
-            });
-        } else {
-            paso2ModificarAudio(files, id, callback); // SIGUIENTE
-        }
-    };
-
-    function paso2ModificarAudio(files, id, callback) {
-        if (files.audio != null) {
-            var audio = files.audio;
-            audio.mv('public/audios/' + id + '.mp3', function (err) {
-                if (err) {
-                    callback(null); // ERROR
-                } else {
-                    callback(true); // FIN
-                }
-            });
-        } else {
-            callback(true); // FIN
-        }
-    };
-
-    app.get('/cancion/:id', function (req, res) {
-        var criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        gestorBD.obtenerOfertas(criterio, function (canciones) {
-            if (canciones == null) {
-                res.send(respuesta);
-            } else {
-                var configuracion = {
-                    url: "https://api.exchangeratesapi.io/latest?base=EUR",
-                    method: "get",
-                    headers: {
-                        "token": "ejemplo",
-                    }
-                }
-                var rest = app.get("rest");
-                rest(configuracion, function (error, response, body) {
-                    console.log("cod: " + response.statusCode + " Cuerpo :" + body);
-                    var objetoRespuesta = JSON.parse(body);
-                    var cambioUSD = objetoRespuesta.rates.USD;
-                    // nuevo campo "usd"
-                    canciones[0].usd = cambioUSD * canciones[0].precio;
-                    var respuesta = swig.renderFile('views/bcancion.html',
-                        {
-                            cancion: canciones[0]
-                        });
-                    res.send(respuesta);
-                })
-            }
-        });
-    });
-
-
-    app.get('/canciones/:genero/:id', function (req, res) {
-        var respuesta = 'id: ' + req.params.id + '<br>'
-            + 'Genero: ' + req.params.genero;
-        res.send(respuesta);
     });
 
 };
