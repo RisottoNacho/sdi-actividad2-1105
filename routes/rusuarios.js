@@ -70,10 +70,11 @@ module.exports = function (app, swig, gestorBD) {
                 req.session.money = usuarios[0].money;
                 var params = [];
                 if (usuarios[0].email == "admin@email.com") {
+                    req.session.role = 'admin';
                     res.redirect("/usuarios");
                 } else {
                     req.session.role = 'standardUser';
-                    res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
+                    res.redirect("/perfil");
                 }
             }
         });

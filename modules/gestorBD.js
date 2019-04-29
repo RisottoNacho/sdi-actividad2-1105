@@ -129,7 +129,7 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 var collection = db.collection('usuarios');
-                collection.remove(criterio, function (err, result) {
+                collection.deleteMany(criterio, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {

@@ -27,12 +27,12 @@
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 {% if role != 'admin'%}
-                <li class="navbar-brand" id="mPublicaciones"><a href="/publicaciones">Mis Ofertas</a></li>
+                <li class="navbar-brand" id="mPerfil"><a href="/perfil">Mi Perfil</a></li>
                 <li class="navbar-brand"  id="mCompras"><a href="/ofertas">Comprar Ofertas</a></li>
                 <li class="navbar-brand" id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
                 {%endif%}
                 {% if role == 'admin'%}
-                <li id="mUsers" ><a href="/usuarios">Usuarios</a></li>
+                <li class="navbar-brand" id="mUsers" ><a href="/usuarios">Usuarios</a></li>
                 {%endif%}
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
@@ -53,8 +53,8 @@
 <div class="container">
 
     <script>
-        var mensaje = getUrlParameter('mensaje');
-        var tipoMensaje = getUrlParameter('tipoMensaje');
+        let mensaje = getUrlParameter('mensaje');
+        let tipoMensaje = getUrlParameter('tipoMensaje');
         if (mensaje != "") {
             if (tipoMensaje == "") {
                 tipoMensaje = 'alert-info';
@@ -65,8 +65,8 @@
 
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            var results = regex.exec(location.search);
+            let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            let results = regex.exec(location.search);
             return results === null ? '' :
                 decodeURIComponent(results[1].replace(/\+/g, ' '));
         };

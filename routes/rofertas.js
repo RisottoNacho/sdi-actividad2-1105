@@ -52,17 +52,21 @@ module.exports = function (app, swig, gestorBD) {
 
     });
 
-    app.get("/publicaciones", function (req, res) {
-        var criterio = {autor: req.session.usuario};
-        gestorBD.obtenerOfertas(criterio, function (canciones) {
-            if (canciones == null) {
-                res.send("Error al listar ");
+    app.get("/perfil", function (req, res) {
+        let criterio = {autor: req.session.usuario};
+        gestorBD.obtenerOfertas(criterio, function (ofertas) {
+            if (ofertas == null) {
+                res.send("Error al del servidor");
             } else {
-                var respuesta = swig.renderFile('views/bpublicaciones.html',
-                    {
-                        canciones: canciones
-                    });
-                res.send(respuesta);
+                let soldOffers = [];
+                for (let i = 0; i < ofertas.length; i++) {
+                    if (ofertas[i].autor == req.session.usuario)
+                        soldOffers.push(ofertas[i]);
+                }
+                let params = [];
+                params['lsOfertas'] = ofertas;
+                params['lsOfertasCompradas'] = soldOffers;
+                res.send(lib.globalRender("views/bperfil.html", params, req.session));
             }
         });
     });
@@ -73,7 +77,7 @@ module.exports = function (app, swig, gestorBD) {
         res.send(lib.globalRender('views/bagregar.html', params, req.session));
     });
 
-    //PREGUNTAR COMO COMPROBAR CAMPOS VACIOS EN SELENIUM
+    //VALIDAR SIEMPRE EN SEVIDOR
     app.post("/oferta", function (req, res) {
         let params = [];
         let oferta = {
@@ -92,7 +96,7 @@ module.exports = function (app, swig, gestorBD) {
                 if (id == null) {
                     res.redirect("/ofertas/agregar?mensaje=Error del servidor&tipoMensaje=alert-danger")
                 } else {
-                    res.send(lib.globalRender('views/bpublicaciones.html', params, req.session));
+                    res.send(lib.globalRender('views/bperfil.html', params, req.session));
                 }
             });
         }
@@ -275,8 +279,4 @@ module.exports = function (app, swig, gestorBD) {
         res.send(respuesta);
     });
 
-    app.get('/suma', function (req, res) {
-        var respuesta = parseInt(req.query.num1) + parseInt(req.query.num2);
-        res.send(String(respuesta));
-    });
 };
