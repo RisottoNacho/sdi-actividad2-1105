@@ -1,24 +1,7 @@
 const lib = require('./lib.js');
 
 module.exports = function (app, swig, gestorBD) {
-    app.get("/nuevas/canciones", function (req, res) {
-        let canciones = [{
-            "nombre": "Blank space",
-            "precio": "1.2"
-        }, {
-            "nombre": "See you again",
-            "precio": "1.3"
-        }, {
-            "nombre": "Uptown Funk",
-            "precio": "1.1"
-        }];
-        var respuesta = swig.renderFile('views/btienda.html', {
-            vendedor: 'Tienda de canciones',
-            canciones: canciones
-        });
-        res.send(respuesta);
-    });
-
+    
     app.get("/ofertas", function (req, res) {
         let criterio = {};
         if (req.query.busqueda != null) {
