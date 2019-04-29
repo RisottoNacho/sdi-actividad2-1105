@@ -3,9 +3,9 @@ const lib = require('./lib.js');
 module.exports = function (app, swig, gestorBD) {
 
     app.get("/ofertas", function (req, res) {
-        let criterio = {};
+        let criterio = {autor: {$ne: req.session.usuario}};
         if (req.query.busqueda != null) {
-            criterio = {"title": {$regex: ".*" + req.query.busqueda + ".*", $options: 'i'}};
+            criterio.append({"title": {$regex: ".*" + req.query.busqueda + ".*", $options: 'i'}});
         }
         let pg = parseInt(req.query.pg); // Es String !!!
         if (req.query.pg == null) { // Puede no venir el param
