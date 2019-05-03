@@ -198,7 +198,7 @@ module.exports = {
             } else {
                 var collection = db.collection('ofertas');
                 collection.count(function (err, count) {
-                    collection.find(criterio).skip((pg - 1) * 4).limit(4)
+                    collection.find(criterio).skip((pg - 1) * 5).limit(5)
                         .toArray(function (err, canciones) {
                             if (err) {
                                 funcionCallback(null);

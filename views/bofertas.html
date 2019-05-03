@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block titulo %}Ofertas {% endblock %}
 
 {% block contenido_principal %}
-<div class="container" >
+<div class="container">
     <h2 style="height: 50px">Lista de ofertas disponibles</h2>
     <div class="row">
         <div style="height: 50px" id="custom-search-input ">
@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <div  class="table-responsive">
+    <div class="table-responsive">
         <table class="table table-hover"
                id="tableOffers">
             <thead>
@@ -49,6 +49,19 @@
             {% endfor %}
             </tbody>
         </table>
+    </div>
+    <!-- Paginación mostrar la actual y 2 anteriores y dos siguientes -->
+    <div class="row text-center">
+        <ul class="pagination">
+            {% for pagina in paginas %}
+            <li class="page-item" id="pi-{{ pagina}}">
+                <a class="page-link" href="/ofertas?pg={{ pagina }}">{{ pagina }}</a>
+            </li>
+            {% endfor %}
+            <script>
+                $("#pi-{{ actual}}").addClass("active");
+            </script>
+        </ul>
     </div>
 </div>
 
