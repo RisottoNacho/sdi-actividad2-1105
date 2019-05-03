@@ -69,25 +69,29 @@ module.exports = function (app, swig, gestorBD) {
 
     //VALIDAR SIEMPRE EN SEVIDOR
     app.post("/oferta", function (req, res) {
-        let oferta = {
-            title: req.body.titulo,
-            description: req.body.descripcion,
-            price: req.body.precio,
-            autor: req.session.usuario,
-            date: new Date(Date.now()),
-            sold: false
-        };
-        if (oferta.price < 0) {
-            res.redirect("/ofertas/agregar?mensaje=El precio debe tener un valor positivo&tipoMensaje=alert-danger")
-        } else {
-            // Conectarse
-            gestorBD.insertarOferta(oferta, function (id) {
-                if (id == null) {
-                    res.redirect("/ofertas/agregar?mensaje=Error del servidor&tipoMensaje=alert-danger")
-                } else {
-                    res.redirect("/perfil");
-                }
-            });
+        if (req.body.titulo == "" || req.body.descripcion == "" || req.body.precio == "")
+            res.redirect("/ofertas/agregar?mensaje=Todos los campos son obligatorios&tipoMensaje=alert-danger");
+        else {
+            let oferta = {
+                title: req.body.titulo,
+                description: req.body.descripcion,
+                price: req.body.precio,
+                autor: req.session.usuario,
+                date: new Date(Date.now()),
+                sold: false
+            };
+            if (oferta.price < 0) {
+                res.redirect("/ofertas/agregar?mensaje=El precio debe tener un valor positivo&tipoMensaje=alert-danger")
+            } else {
+                // Conectarse
+                gestorBD.insertarOferta(oferta, function (id) {
+                    if (id == null) {
+                        res.redirect("/ofertas/agregar?mensaje=Error del servidor&tipoMensaje=alert-danger")
+                    } else {
+                        res.redirect("/perfil");
+                    }
+                });
+            }
         }
     });
 
@@ -101,27 +105,28 @@ module.exports = function (app, swig, gestorBD) {
         if (price < 0 || req.session.money - price < 0) {
             alert("Wait, that's illegal");
             res.redirect("/desconectarse");
+        } else {
+            req.session.money = req.session.money - price;
+            gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {
+                if (oferta == null)
+                    res.send("Error del servidor");
+                else {
+                    gestorBD.modificarUsuario({email: req.session.usuario}, req.session.money, function (oferta) {
+                        if (oferta == null)
+                            res.send("Error del servidor");
+                        else {
+                            gestorBD.insertarCompra(compra, function (idCompra) {
+                                if (idCompra == null) {
+                                    res.send("Error del servidor");
+                                } else {
+                                    res.redirect("/ofertas");
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         }
-        req.session.money = req.session.money - price;
-        gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {
-            if (oferta == null)
-                res.send("Error del servidor");
-            else {
-                gestorBD.modificarUsuario({email: req.session.usuario}, req.session.money, function (oferta) {
-                    if (oferta == null)
-                        res.send("Error del servidor");
-                    else {
-                        gestorBD.insertarCompra(compra, function (idCompra) {
-                            if (idCompra == null) {
-                                res.send("Error del servidor");
-                            } else {
-                                res.redirect("/ofertas");
-                            }
-                        });
-                    }
-                });
-            }
-        });
     });
 
     app.get('/oferta/eliminar/:id', function (req, res) {
