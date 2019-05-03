@@ -51,6 +51,10 @@ module.exports = function (app, swig, gestorBD) {
         let params = [];
         res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
     });
+    app.get("/identificarse", function (req, res) {
+        let params = [];
+        res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
+    });
 
     app.post("/identificarse", function (req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
