@@ -106,6 +106,7 @@ module.exports = function (app, swig, gestorBD) {
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
         req.session.money = null;
+        req.session.role = null;
         let params = [];
         res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
     });

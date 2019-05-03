@@ -79,7 +79,7 @@ app.use('/api/cancion', routerUsuarioToken);
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
     console.log("routerUsuarioSession");
-    if (req.session.usuario && req.session.usuario != "admin@email.com") {
+    if (req.session.usuario && req.session.role == 'standardUser') {
         // dejamos correr la petición
         next();
     } else {
@@ -87,15 +87,16 @@ routerUsuarioSession.use(function (req, res, next) {
     }
 });
 //Aplicar routerUsuarioSession
-app.use("/canciones/agregar", routerUsuarioSession);
-app.use("/publicaciones", routerUsuarioSession);
-app.use("/cancion/comprar", routerUsuarioSession);
-app.use("/compras", routerUsuarioSession);
+app.use("/ofertas/agregar", routerUsuarioSession);
+app.use("/ofertas", routerUsuarioSession);
+app.use("/perfil", routerUsuarioSession);
+app.use("/oferta/comprar/**", routerUsuarioSession);
+app.use("/oferta/eliminar/*", routerUsuarioSession);
 
-// routerUsuario
-let routerUsuario = express.Router();
-routerUsuario.use(function (req, res, next) {
-    console.log("routerUsuario");
+// routerSession
+let routerSession = express.Router();
+routerSession.use(function (req, res, next) {
+    console.log("routerSession");
     if (req.session.usuario) {
         // dejamos correr la petición
         next();
@@ -104,13 +105,31 @@ routerUsuario.use(function (req, res, next) {
     }
 });
 //Aplicar routerUsuarioSession
-app.use("/desconectarse", routerUsuario);
+app.use("/desconectarse", routerSession);
+
+// routerSession
+let routerNoSession = express.Router();
+routerNoSession.use(function (req, res, next) {
+    console.log("routerSession");
+    if (req.session.usuario == null) {
+        // dejamos correr la petición
+        next();
+    } else {
+        if (req.session.role == 'admin')
+            res.redirect("/usuarios");
+        else
+            res.redirect("/perfil");
+    }
+});
+//Aplicar routerUsuarioSession
+app.use("/identificarse", routerNoSession);
+app.use("/registrarse", routerNoSession);
 
 // routeradmin
 let routerAdminSession = express.Router();
 routerAdminSession.use(function (req, res, next) {
     console.log("routeradmin");
-    if (req.session.usuario && req.session.usuario == "admin@email.com") {
+    if (req.session.usuario && req.session.role == 'admin') {
         // dejamos correr la petición
         next();
     } else {
@@ -126,8 +145,8 @@ app.use("/usuarios", routerAdminSession);
 var routerAudios = express.Router();
 routerAudios.use(function (req, res, next) {
     console.log("routerAudios");
-    var path = require('path');
-    var idCancion = path.basename(req.originalUrl, '.mp3');
+    let path = require('path');
+    let idCancion = path.basename(req.originalUrl, '.mp3');
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(idCancion)}, function (canciones) {
             if (req.session.usuario && canciones[0].autor == req.session.usuario) {
@@ -153,26 +172,49 @@ routerAudios.use(function (req, res, next) {
 app.use("/audios/", routerAudios);
 
 //routerUsuarioAutor
-var routerUsuarioAutor = express.Router();
+let routerUsuarioAutor = express.Router();
 routerUsuarioAutor.use(function (req, res, next) {
     console.log("routerUsuarioAutor");
-    var path = require('path');
-    var id = path.basename(req.originalUrl);
+    let path = require('path');
+    let id = path.basename(req.originalUrl);
 // Cuidado porque req.params no funciona
 // en el router si los params van en la URL.
     gestorBD.obtenerOfertas(
-        {_id: mongo.ObjectID(id)}, function (canciones) {
-            console.log(canciones[0]);
-            if (canciones[0].autor == req.session.usuario) {
+        {_id: mongo.ObjectID(id)}, function (ofertas) {
+            console.log(ofertas[0]);
+            if (ofertas[0].autor == req.session.usuario) {
                 next();
             } else {
-                res.redirect("/tienda");
+                res.redirect("/perfil?mensaje=No eres propietario de esa oferta&tipoMensaje=alert-danger \"");
             }
         })
 });
 //Aplicar routerUsuarioAutor
-app.use("/cancion/modificar", routerUsuarioAutor);
-app.use("/cancion/eliminar", routerUsuarioAutor);
+app.use("/oferta/eliminar", routerUsuarioAutor);
+
+//routerUsuarioAutor
+var routerUsuarioNoAutor = express.Router();
+routerUsuarioNoAutor.use(function (req, res, next) {
+    console.log("routerUsuarioNoAutor");
+    let path = require('path');
+    let id = path.basename(path.dirname(req.originalUrl));
+    let price = path.basename(req.originalUrl)
+    console.log(id);
+    console.log(price);
+// Cuidado porque req.params no funciona
+// en el router si los params van en la URL.
+    gestorBD.obtenerOfertas(
+        {_id: mongo.ObjectID(id)}, function (ofertas) {
+            console.log(ofertas[0]);
+            if (ofertas[0].autor != req.session.usuario) {
+                next();
+            } else {
+                res.redirect("/ofertas?mensaje=No puedes comprar tus propias ofertas&tipoMensaje=alert-danger \"");
+            }
+        })
+});
+//Aplicar routerUsuarioAutor
+app.use("/oferta/comprar", routerUsuarioNoAutor);
 
 app.use(express.static('public'));
 // Variables
@@ -188,7 +230,7 @@ require("./routes/rapicanciones.js")(app, gestorBD);
 
 
 app.get('/', function (req, res) {
-    res.redirect('/tienda');
+    res.redirect('/identificarse');
 });
 
 // IMPORTANTE MANEJO DE ERRORES
