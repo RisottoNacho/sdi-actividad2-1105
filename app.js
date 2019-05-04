@@ -9,6 +9,7 @@ app.set('rest', rest);
 var jwt = require('jsonwebtoken');
 app.set('jwt', jwt);
 
+var fs = require('fs');
 var https = require('https');
 var http = require('http');
 
@@ -93,6 +94,7 @@ app.use("/ofertas", routerUsuarioSession);
 app.use("/perfil", routerUsuarioSession);
 app.use("/oferta/comprar/**", routerUsuarioSession);
 app.use("/oferta/eliminar/*", routerUsuarioSession);
+app.use("/cliente.html", routerUsuarioSession);
 
 // routerSession
 let routerSession = express.Router();
@@ -141,36 +143,6 @@ routerAdminSession.use(function (req, res, next) {
 
 app.use("/usuarios", routerAdminSession);
 
-
-//routerAudios
-var routerAudios = express.Router();
-routerAudios.use(function (req, res, next) {
-    console.log("routerAudios");
-    let path = require('path');
-    let idCancion = path.basename(req.originalUrl, '.mp3');
-    gestorBD.obtenerOfertas(
-        {_id: mongo.ObjectID(idCancion)}, function (canciones) {
-            if (req.session.usuario && canciones[0].autor == req.session.usuario) {
-                next();
-            } else {
-                //res.redirect("/tienda");
-                var criterio = {
-                    usuario: req.session.usuario,
-                    cancionId: mongo.ObjectID(idCancion)
-                };
-
-                gestorBD.obtenerCompras(criterio, function (compras) {
-                    if (compras != null && compras.length > 0) {
-                        next();
-                    } else {
-                        res.redirect("/tienda");
-                    }
-                });
-            }
-        })
-});
-//Aplicar routerAudios
-app.use("/audios/", routerAudios);
 
 //routerUsuarioAutor
 let routerUsuarioAutor = express.Router();
@@ -246,9 +218,18 @@ app.get('/', function (req, res) {
 
 
 // lanzar el servidor
+/*
+https.createServer({
+    key: fs.readFileSync('certificates/alice.key'),
+    cert: fs.readFileSync('certificates/alice.crt')
+}, app).listen(app.get('port'), function () {
+    console.log("Servidor activo");
+});*/
+
 http.createServer(app).listen(app.get('port'), function () {
     console.log("Servidor activo");
 });
+
 /*
 app.listen(app.get('port'), function() {
     console.log("Servidor activo");

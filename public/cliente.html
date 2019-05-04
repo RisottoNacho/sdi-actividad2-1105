@@ -1,6 +1,7 @@
 <html lang="en">
+<link rel="icon" href="/img/mw.png">
 <head>
-    <title>jQuery uoMusic </title>
+    <title>MyWallapop - Chat </title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
@@ -19,14 +20,16 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <img src="/img/logo.png" alt="logo"/>
+            <img class="navbar-text" src="/img/mw.png" height="46" width="66" alt="logo"/>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
-            <ul class="nav navbar-nav" id="barra-menu">
-                <li><a onclick=widgetCanciones()>Canciones</a></li>
+            <ul class="nav navbar-nav">
+                <li class="navbar-brand" id="mPerfil"><a href="/perfil">Mi Perfil</a></li>
+                <li class="navbar-brand" id="mCompras"><a href="/ofertas">Comprar Ofertas</a></li>
+                <li class="navbar-brand" id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right" id="barra-menu-derecha">
-                <!-- Opciones de menú aqui -->
+            <ul id="logNav" class="nav navbar-nav navbar-right">
+                <li class="navbar-brand" ><a href="/desconectarse"><span class="glyphicon glyphicon-log-out"></span> Desconectar</a></li>
             </ul>
         </div>
     </div>
@@ -37,10 +40,11 @@
 <div class="container" id="contenedor-principal"> <!--  id para identificar -->
     <script>
         var token;
-        var URLbase = "https://localhost:8081/api";
+        var URLbase = "http://localhost:8081/api";
         $("#contenedor-principal").load("widget-login.html");
 
         if (Cookies.get('token') != null) {
+            //$("#logNav").prepend("<li class=\"navbar-brand\"><a onclick=cerrarChat()><span class=\"glyphicon glyphicon-log-out\"></span>Cerrar Chat</a></li>");
             token = Cookies.get('token');
             $("#contenedor-principal").load("widget-canciones.html");
         }
@@ -54,6 +58,11 @@
             $("#contenedor-principal").load("widget-canciones.html");
         }
 
+        function cerrarChat() {
+            Cookies.remove('token');
+            $("#widget-login")
+                .prepend("<div class='alert alert-primary'>Has salido de la sala de chat</div>");
+        }
 
         function widgetCanciones() {
             $("#contenedor-principal").load("widget-canciones.html");

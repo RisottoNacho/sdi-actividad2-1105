@@ -13,12 +13,12 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
-
+/*
     app.get("/api/enterChat/:offer/:target",function (req,res) {
         let criterio = {
             offer: req.params.offer
         };
-    });
+    });*/
 
     app.get("/api/sendMessage/:text/:target/:offer", function (req, res) {
         let criterio = {
