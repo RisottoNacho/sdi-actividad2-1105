@@ -44,7 +44,7 @@ gestorBD.init(app, mongo);
 var routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function (req, res, next) {
     // obtener el token, vía headers (opcionalmente GET y/o POST).
-    var token = req.headers['token'] || req.body.token || req.query.token;
+    let token = req.headers['token'] || req.body.token || req.query.token;
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', function (err, infoToken) {
@@ -73,7 +73,7 @@ routerUsuarioToken.use(function (req, res, next) {
     }
 });
 // Aplicar routerUsuarioToken
-app.use('/api/cancion', routerUsuarioToken);
+app.use('/api/sendMessage', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
@@ -192,8 +192,8 @@ routerUsuarioAutor.use(function (req, res, next) {
 //Aplicar routerUsuarioAutor
 app.use("/oferta/eliminar", routerUsuarioAutor);
 
-//routerUsuarioAutor
-var routerUsuarioNoAutor = express.Router();
+//routerUsuarioNoAutor
+let routerUsuarioNoAutor = express.Router();
 routerUsuarioNoAutor.use(function (req, res, next) {
     console.log("routerUsuarioNoAutor");
     let path = require('path');
