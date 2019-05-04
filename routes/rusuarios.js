@@ -51,21 +51,6 @@ module.exports = function (app, swig, gestorBD) {
         }
     });
 
-    app.get("/identificarseCliente", function (req, res) {
-        let configuracion = {url: "https://localhost:8081/api/autenticar",
-            method: "get"};
-        let rest = app.get("rest");
-        rest(configuracion, function (error, response, body) {
-            console.log("cod: " + response.statusCode + " Cuerpo :" + body);
-            let objetoRespuesta = JSON.parse(body);
-            if(objetoRespuesta.autenticado){
-                req.headers['token'] = objetoRespuesta.token;
-            }
-        });
-        let params = [];
-        res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
-    });
-
     app.get("/identificarse", function (req, res) {
         let params = [];
         res.send(lib.globalRender('views/bidentificacion.html', params, req.session));
