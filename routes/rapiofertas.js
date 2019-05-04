@@ -14,26 +14,35 @@ module.exports = function (app, gestorBD) {
         });
     });
 
-    app.get("/api/sendMessage/:text/:target/:offer", function (req, res) {
-        let criterio={
-        {$and : [req.params.target]}
+    app.get("/api/enterChat/:offer/:target",function (req,res) {
+        let criterio = {
+            offer: req.params.offer
         };
     });
 
-    function crearConver(user, target, offer){
-        let chat={
-            people : [user,target],
-            offer : offer
+    app.get("/api/sendMessage/:text/:target/:offer", function (req, res) {
+        let criterio = {
+            offer: req.params.offer
         };
-        gestorBD.insertarChat(chat,function (id) {
-            if(id == null){
-                res.status(500);
-                res.json({
-                    error: "se ha producido un error"
+        gestorBD.obtenerChat(criterio, function (chat) {
+            if (chat == null) {
+                crearConver(req.session.usuario, req.params.target, req.params.offer, req.params.text);
+            } else {
+                chat.messages.push(new message(req.params.text, req.session.usuario, new Date()));
+                let messages = chat.messages;
+                gestorBD.enviarMensaje(criterio, messages,function (id) {
+                    if(id == null){
+                        res.status(500);
+                        res.json({
+                            error: "se ha producido un error"
+                        });
+                    }else{
+                        res.status(200);
+                    }
                 });
             }
         });
-    };
+    });
 
     app.get("/api/ofertas", function (req, res) {
         gestorBD.obtenerOfertas({}, function (ofertas) {
@@ -47,62 +56,6 @@ module.exports = function (app, gestorBD) {
                 res.send(JSON.stringify(ofertas));
             }
         });
-    });
-
-    app.get("/api/cancion/:id", function (req, res) {
-        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
-
-        gestorBD.obtenerOfertas(criterio, function (canciones) {
-            if (canciones == null) {
-                res.status(500);
-                res.json({
-                    error: "se ha producido un error"
-                })
-            } else {
-                res.status(200);
-                res.send(JSON.stringify(canciones[0]));
-            }
-        });
-    });
-
-    app.delete("/api/cancion/:id", function (req, res) {
-        var criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
-
-        gestorBD.eliminarOferta(criterio, function (canciones) {
-            if (canciones == null) {
-                res.status(500);
-                res.json({
-                    error: "se ha producido un error"
-                })
-            } else {
-                res.status(200);
-                res.send(JSON.stringify(canciones));
-            }
-        });
-    });
-
-    app.post("/api/cancion", function (req, res) {
-        let cancion = {
-            nombre: req.body.nombre,
-            genero: req.body.genero,
-            precio: req.body.precio,
-        };
-        // ¿Validar nombre, genero, precio?
-        gestorBD.insertarOferta(cancion, function (id) {
-            if (id == null) {
-                res.status(500);
-                res.json({
-                    error: "se ha producido un error"
-                })
-            } else {
-                res.status(201);
-                res.json({
-                    mensaje: "canción insertarda",
-                    _id: id
-                })
-            }
-        });
-
     });
 
     app.put("/api/cancion/:id", function (req, res) {
@@ -131,7 +84,7 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
-    app.post("/api/autenticar/", function (req, res) {
+    app.post("/api/autenticar", function (req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let criterio = {
@@ -158,4 +111,31 @@ module.exports = function (app, gestorBD) {
 
         });
     });
-}
+};
+
+function crearConver(user, target, offer, text) {
+    let message = new message(text, user, new Date());
+    let chat = {
+        owner: target,
+        buyer: user,
+        offer: offer,
+        messages: [message]
+    };
+    gestorBD.insertarChat(chat, function (id) {
+        if (id == null) {
+            res.status(500);
+            res.json({
+                error: "se ha producido un error"
+            });
+        }
+    });
+};
+
+class message {
+    constructor(text, sender, date) {
+        this.text = text;
+        this.sender = sender;
+        this.date = date;
+        this.read = false;
+    }
+};
