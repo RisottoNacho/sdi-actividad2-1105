@@ -7,6 +7,52 @@ module.exports = function (app, gestorBD) {
             };
         });*/
 
+    app.get("/api/messageList/:offer", function (req, res) {
+        let user = req.session.usuario;
+        let criterio = {
+            "_id": gestorBD.mongo.ObjectID(req.params.offer)
+        };
+        gestorBD.obtenerOfertas(criterio, function (ofertas) {
+            criterio = {
+                "offer": req.params.offer
+            };
+            if (ofertas == null || ofertas.length == 0) {
+                res.status(500);
+                res.json({
+                    error: "Error de la base de datos o oferta inexistente"
+                });
+            } else if (user == ofertas[0].autor) {
+                gestorBD.obtenerChats(criterio, function (chats) {
+                    if (chats == null || chats.length == 0) {
+                        res.status(500);
+                        res.json({
+                            error: "No hay chats para esta oferta"
+                        });
+                    } else {
+                        res.status(200);
+                        res.json({
+                            chats: chats
+                        });
+                    }
+                });
+            } else {
+                gestorBD.obtenerChat(criterio, function (chat) {
+                    if (chat == null) {
+                        res.status(500);
+                        res.json({
+                            error: "No hay chat para esta oferta"
+                        });
+                    } else {
+                        res.status(200);
+                        res.json({
+                            messages: chat.messages
+                        });
+                    }
+                });
+            }
+        });
+    });
+
     app.get("/api/sendMessage/:text/:target/:offer", function (req, res) {
         let user = req.session.usuario;
         if (user == req.params.target) {

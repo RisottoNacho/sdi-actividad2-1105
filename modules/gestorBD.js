@@ -28,11 +28,11 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 var collection = db.collection('ofertas');
-                collection.find(criterio).toArray(function (err, canciones) {
+                collection.find(criterio).toArray(function (err, ofertas) {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        funcionCallback(canciones);
+                        funcionCallback(ofertas);
                     }
                     db.close();
                 });
@@ -83,6 +83,22 @@ module.exports = {
                         funcionCallback(null);
                     } else {
                         funcionCallback(chat[0]);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },obtenerChats: function (criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('chats');
+                collection.find(criterio).toArray(function (err, chats) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(chats);
                     }
                     db.close();
                 });
