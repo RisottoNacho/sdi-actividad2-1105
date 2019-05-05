@@ -21,6 +21,7 @@
         <thead>
         <tr>
             <th>Interesado</th>
+            <th >Oferta</th>
             <th class="col-md-1"></th>
         </tr>
         </thead>
@@ -98,6 +99,7 @@
             $("#tablaPropias").append(
                 "<tr id=" + chatsMostrar[i]._id + ">" +
                 "<td>" + chatsMostrar[i].buyer + "</td>" +
+                "<td>" + chatsMostrar[i].offer + "</td>" +
                 "<td>" +
                 "<a name='chatBuyer' onclick=chat('" + chatsMostrar[i].offer + "','" + chatsMostrar[i].buyer + "')>Chatear</a><br>" +
                 "</td>" +

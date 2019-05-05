@@ -11,6 +11,9 @@ app.set('jwt', jwt);
 
 const http = require('http');
 
+const log4js = require('log4js');
+let logger = log4js.getLogger();
+
 const expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
