@@ -107,7 +107,8 @@ module.exports = function (app, gestorBD) {
     });
 
     app.get("/api/ofertas", function (req, res) {
-        gestorBD.obtenerOfertas({}, function (ofertas) {
+        let user = req.session.ususario;
+        gestorBD.obtenerOfertas({autor: {$ne: user}}, function (ofertas) {
             if (ofertas == null) {
                 res.status(500);
                 res.json({
