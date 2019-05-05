@@ -104,30 +104,34 @@ module.exports = function (app, swig, gestorBD) {
             usuario: req.session.usuario,
             ofertaId: ofertaId
         };
-        if (price < 0 || req.session.money - price < 0) {
-            res.redirect("/ofertas?mensaje=Dinero insuficiente&tipoMensaje=alert-danger");
-        } else {
-            req.session.money = req.session.money - price;
-            gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {
-                if (oferta == null)
-                    res.send("Error del servidor");
-                else {
-                    gestorBD.modificarUsuario({email: req.session.usuario}, req.session.money, function (oferta) {
-                        if (oferta == null)
-                            res.send("Error del servidor");
-                        else {
-                            gestorBD.insertarCompra(compra, function (idCompra) {
-                                if (idCompra == null) {
-                                    res.send("Error del servidor");
-                                } else {
-                                    res.redirect("/ofertas");
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
+        gestorBD.obtenerUsuarios({email: req.session.usuario}, function (usuarios) {
+            req.session.money = usuarios[0].money;
+            if (price < 0 || req.session.money - price < 0) {
+                res.redirect("/ofertas?mensaje=Dinero insuficiente&tipoMensaje=alert-danger");
+            } else {
+                req.session.money = req.session.money - price;
+                gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {
+                    if (oferta == null)
+                        res.send("Error del servidor");
+                    else {
+                        gestorBD.modificarUsuario({email: req.session.usuario}, req.session.money, function (oferta) {
+                            if (oferta == null)
+                                res.send("Error del servidor");
+                            else {
+                                gestorBD.insertarCompra(compra, function (idCompra) {
+                                    if (idCompra == null) {
+                                        res.send("Error del servidor");
+                                    } else {
+                                        res.redirect("/ofertas");
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
     });
 
     app.get('/oferta/eliminar/:id', function (req, res) {
