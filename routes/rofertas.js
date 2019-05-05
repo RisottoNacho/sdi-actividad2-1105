@@ -103,8 +103,7 @@ module.exports = function (app, swig, gestorBD) {
             ofertaId: ofertaId
         };
         if (price < 0 || req.session.money - price < 0) {
-            alert("Wait, that's illegal");
-            res.redirect("/desconectarse");
+            res.redirect("/ofertas?mensaje=Dinero insuficiente&tipoMensaje=alert-danger");
         } else {
             req.session.money = req.session.money - price;
             gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {

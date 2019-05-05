@@ -78,11 +78,11 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 var collection = db.collection('chats');
-                collection.findOne(criterio).toArray(function (err, chat) {
+                collection.find(criterio).toArray(function (err, chat) {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        funcionCallback(chat);
+                        funcionCallback(chat[0]);
                     }
                     db.close();
                 });

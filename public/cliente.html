@@ -46,7 +46,7 @@
         if (Cookies.get('token') != null) {
             //$("#logNav").prepend("<li class=\"navbar-brand\"><a onclick=cerrarChat()><span class=\"glyphicon glyphicon-log-out\"></span>Cerrar Chat</a></li>");
             token = Cookies.get('token');
-            $("#contenedor-principal").load("widget-canciones.html");
+            $("#contenedor-principal").load("widget-ofertas.html");
         }
 
         var url = new URL(window.location.href);
@@ -54,8 +54,8 @@
         if (w == "login") {
             $("#contenedor-principal").load("widget-login.html");
         }
-        if (w == "canciones") {
-            $("#contenedor-principal").load("widget-canciones.html");
+        if (w == "ofertas") {
+            $("#contenedor-principal").load("widget-ofertas.html");
         }
 
         function cerrarChat() {
