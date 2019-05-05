@@ -32,7 +32,7 @@
             },
             dataType: 'json',
             success: function (respuesta) {
-                console.log(respuesta); // <- Prueba
+               // console.log(respuesta); // <- Prueba
                 token = respuesta.token;
                 Cookies.set('token', respuesta.token);
                 $("#contenedor-principal").load("widget-ofertas.html");

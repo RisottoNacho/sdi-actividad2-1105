@@ -44,7 +44,7 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                console.log("Carga de mensajes: " + respuesta.messages);
+                //console.log("Carga de mensajes: " + respuesta.messages);
                 if (respuesta.buyer) {
                     let mes = respuesta.messages;
                     $('.messages').empty();

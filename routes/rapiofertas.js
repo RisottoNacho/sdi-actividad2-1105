@@ -129,7 +129,7 @@ module.exports = function (app, gestorBD) {
 
     app.get("/api/ofertas", function (req, res) {
         let user = res.usuario;
-        console.log(user);
+       //console.log(user);
         gestorBD.obtenerOfertas({autor: {$ne: user}}, function (ofertas) {
             if (ofertas == null) {
                 res.status(500);
@@ -148,7 +148,7 @@ module.exports = function (app, gestorBD) {
 
     app.get("/api/ofertasPropias", function (req, res) {
         let user = res.usuario;
-        console.log(user);
+        //console.log(user);
         gestorBD.obtenerOfertas({autor: user}, function (ofertas) {
             if (ofertas == null) {
                 res.status(500);

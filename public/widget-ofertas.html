@@ -58,7 +58,7 @@
             headers: {"token": token},
             success: function (respuesta) {
                 ofertas = respuesta;
-                console.log(ofertas);
+                //console.log(ofertas);
                 actualizarTabla(ofertas);
             },
             error: function (error) {
@@ -82,7 +82,7 @@
             headers: {"token": token},
             success: function (chats) {
                 chatsPropios(chats);
-                console.log("adsd: "+chats);
+                //console.log("adsd: "+chats);
             },
             error: function (error) {
                 //Cookies.remove('token');

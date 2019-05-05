@@ -42,10 +42,10 @@ gestorBD.init(app, mongo);
 // routerUsuarioToken
 const routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function (req, res, next) {
-    console.log("routerUsuarioToken");
+    //console.log("routerUsuarioToken");
     // obtener el token, vía headers (opcionalmente GET y/o POST).
     let token = req.headers['token'] || req.body.token || req.query.token;
-    console.log(token.usuario);
+    //console.log(token.usuario);
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', function (err, infoToken) {
@@ -82,7 +82,7 @@ app.use('/api/chats', routerUsuarioToken);
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
-    console.log("routerUsuarioSession");
+    //console.log("routerUsuarioSession");
     if (req.session.usuario && req.session.role == 'standardUser') {
         // dejamos correr la petición
         next();
@@ -100,7 +100,7 @@ app.use("/oferta/eliminar/*", routerUsuarioSession);
 // routerSession
 let routerSession = express.Router();
 routerSession.use(function (req, res, next) {
-    console.log("routerSession");
+    //console.log("routerSession");
     if (req.session.usuario) {
         // dejamos correr la petición
         next();
@@ -114,7 +114,7 @@ app.use("/desconectarse", routerSession);
 // routerSession
 let routerNoSession = express.Router();
 routerNoSession.use(function (req, res, next) {
-    console.log("routerSession");
+    //console.log("routerSession");
     if (req.session.usuario == null) {
         // dejamos correr la petición
         next();
@@ -132,7 +132,7 @@ app.use("/registrarse", routerNoSession);
 // routeradmin
 let routerAdminSession = express.Router();
 routerAdminSession.use(function (req, res, next) {
-    console.log("routeradmin");
+    //console.log("routeradmin");
     if (req.session.usuario && req.session.role == 'admin') {
         // dejamos correr la petición
         next();
@@ -148,14 +148,14 @@ app.use("/usuarios", routerAdminSession);
 //routerUsuarioAutor
 let routerUsuarioAutor = express.Router();
 routerUsuarioAutor.use(function (req, res, next) {
-    console.log("routerUsuarioAutor");
+    //console.log("routerUsuarioAutor");
     let path = require('path');
     let id = path.basename(req.originalUrl);
 // Cuidado porque req.params no funciona
 // en el router si los params van en la URL.
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id)}, function (ofertas) {
-            console.log(ofertas[0]);
+            //console.log(ofertas[0]);
             if (ofertas[0].autor == req.session.usuario) {
                 next();
             } else {
@@ -169,17 +169,17 @@ app.use("/oferta/eliminar", routerUsuarioAutor);
 //routerUsuarioNoAutor
 let routerUsuarioNoAutor = express.Router();
 routerUsuarioNoAutor.use(function (req, res, next) {
-    console.log("routerUsuarioNoAutor");
+    //console.log("routerUsuarioNoAutor");
     let path = require('path');
     let id = path.basename(path.dirname(req.originalUrl));
     let price = path.basename(req.originalUrl);
-    console.log(id);
-    console.log(price);
+   // console.log(id);
+    //console.log(price);
 // Cuidado porque req.params no funciona
 // en el router si los params van en la URL.
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id)}, function (ofertas) {
-            console.log(ofertas[0]);
+            //console.log(ofertas[0]);
             if (ofertas[0].autor != req.session.usuario && ofertas[0].price == price) {
                 next();
             } else {
