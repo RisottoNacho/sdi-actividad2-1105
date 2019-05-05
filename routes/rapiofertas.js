@@ -8,33 +8,35 @@ module.exports = function (app, gestorBD) {
         });*/
 
     app.get("/api/sendMessage/:text/:target/:offer", function (req, res) {
-        if (req.session.usuario == req.params.target) {
+        let user = req.session.usuario;
+        if (user == req.params.target) {
             res.status(500);
             res.json({
                 error: "No puedes enviarte mensajes a ti mismo"
             });
         } else {
             let criterio = {
-                "offer": req.params.offer,
-            {
-                $and
-                {
-                    [{
-                        $or: [{"buyer": req.session.usuario}, {"buyer": req.params.target}]
-                    }, {
-                        $or: [{"owner": req.session.usuario}, {"owner": req.params.target}]
-                    }]
+                    $and: [
+                        {"offer": req.params.offer},
+                        {
+                            $and:
+                                [
+                                    {
+                                        $or: [{"buyer": user}, {"buyer": req.params.target}]
+                                    }, {
+                                    $or: [{"owner": user}, {"owner": req.params.target}]
+                                }
+                                ]
+                        }]
                 }
-            }
-        }
             ;
             gestorBD.obtenerChat(criterio, function (chat) {
                 if (chat == null) {
-                    crearConver(req.session.usuario, req.params.target, req.params.offer, req.params.text, gestorBD, res);
+                    crearConver(user, req.params.target, req.params.offer, req.params.text, gestorBD, res);
                 } else {
                     let message = {
                         text: req.params.text,
-                        sender: req.session.usuario,
+                        sender: user,
                         date: new Date(),
                         read: false
                     };
