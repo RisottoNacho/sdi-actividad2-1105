@@ -20,14 +20,14 @@
 		</thead>
 		<tbody>
 		{% for oferta in lsOfertas %}
-		<tr>
+		<tr id="{{oferta._id.toString()}}">
 			<td>{{oferta.title}}</td>
 			<td>{{oferta.description}}</td>
 			<td>{{oferta.price}}</td>
 			{% if oferta.sold %}
 			<td>Vendida</td>
 			{% else %}
-			<td><a href="/oferta/eliminar/{{oferta._id.toString()}}">Eliminar</a></td>
+			<td><a name="del" href="/oferta/eliminar/{{oferta._id.toString()}}">Eliminar</a></td>
 			{% endif %}
 		</tr>
 		{% endfor %}

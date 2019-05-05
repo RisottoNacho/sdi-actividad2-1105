@@ -8,10 +8,10 @@
             <form method="get" action="/ofertas">
                 <div
                         class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-left">
-                    <input type="text" class="search-query form-control"
+                    <input id="searchBox" type="text" class="search-query form-control"
                            placeholder="Busca una oferta" name="busqueda"/>
                     <span class="input-group-btn">
-						<button class="btn" type="submit">
+						<button id="lupiña" class="btn" type="submit">
 							<span class="glyphicon glyphicon-search"></span>
 						</button>
 					</span>
@@ -32,7 +32,7 @@
             </thead>
             <tbody>
             {% for oferta in lsOfertas %}
-            <tr>
+            <tr name="row">
                 <td>{{oferta.title}}</td>
                 <td>{{oferta.description}}</td>
                 <td>{{oferta.price}}</td>
@@ -40,7 +40,7 @@
                 <td>Vendida</td>
                 {% else %}
                 {% if oferta.price <= wallet %}
-                <td><a href="/oferta/comprar/{{oferta._id.toString()}}/{{oferta.price}}">Comprar</a></td>
+                <td><a name="buy" href="/oferta/comprar/{{oferta._id.toString()}}/{{oferta.price}}">Comprar</a></td>
                 {% else %}
                 <td>Saldo insuficiente</td>
                 {% endif %}
