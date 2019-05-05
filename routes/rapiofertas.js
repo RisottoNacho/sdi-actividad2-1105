@@ -22,7 +22,6 @@ module.exports = function (app, gestorBD) {
                 res.json({
                     error: "Error de la base de datos o oferta inexistente"
                 });
-                s
             } else if (user == ofertas[0].autor) {
                 criterio = {
                     "offer": req.params.offer
@@ -247,4 +246,4 @@ function crearConver(user, target, offer, text, gestorBD, res) {
         }
     });
 
-};
+}

@@ -1,31 +1,29 @@
 // Módulos
-var express = require('express');
-var app = express();
-var crypto = require('crypto');
+const express = require('express');
+const app = express();
+const crypto = require('crypto');
 
-var rest = require('request');
+const rest = require('request');
 app.set('rest', rest);
 
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 app.set('jwt', jwt);
 
-var fs = require('fs');
-var https = require('https');
-var http = require('http');
+const http = require('http');
 
-var expressSession = require('express-session');
+const expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
     resave: true,
     saveUninitialized: true
 }));
 
-var fileUpload = require('express-fileupload');
+const fileUpload = require('express-fileupload');
 app.use(fileUpload());
-var swig = require('swig');
-var mongo = require('mongodb');
+const swig = require('swig');
+const mongo = require('mongodb');
 
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function (req, res, next) {
@@ -38,11 +36,11 @@ app.use(function (req, res, next) {
 });
 
 
-var gestorBD = require("./modules/gestorBD.js");
+const gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app, mongo);
 
 // routerUsuarioToken
-var routerUsuarioToken = express.Router();
+const routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function (req, res, next) {
     console.log("routerUsuarioToken");
     // obtener el token, vía headers (opcionalmente GET y/o POST).
@@ -58,7 +56,6 @@ routerUsuarioToken.use(function (req, res, next) {
                     error: 'Token invalido o caducado'
                 });
                 // También podríamos comprobar que intoToken.usuario existe
-                return;
 
             } else {
                 // dejamos correr la petición
@@ -175,7 +172,7 @@ routerUsuarioNoAutor.use(function (req, res, next) {
     console.log("routerUsuarioNoAutor");
     let path = require('path');
     let id = path.basename(path.dirname(req.originalUrl));
-    let price = path.basename(req.originalUrl)
+    let price = path.basename(req.originalUrl);
     console.log(id);
     console.log(price);
 // Cuidado porque req.params no funciona

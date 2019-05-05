@@ -38,8 +38,8 @@
 <!-- Contenido -->
 <div class="container" id="contenedor-principal"> <!--  id para identificar -->
     <script>
-        var token;
-        var URLbase = "http://localhost:8081/api";
+        let token;
+        const URLbase = "http://localhost:8081/api";
         $("#contenedor-principal").load("widget-login.html");
 
         if (Cookies.get('token') != null) {
@@ -48,8 +48,8 @@
             $("#contenedor-principal").load("widget-ofertas.html");
         }
 
-        var url = new URL(window.location.href);
-        var w = url.searchParams.get("w");
+        const url = new URL(window.location.href);
+        const w = url.searchParams.get("w");
         if (w == "login") {
             $("#contenedor-principal").load("widget-login.html");
         }

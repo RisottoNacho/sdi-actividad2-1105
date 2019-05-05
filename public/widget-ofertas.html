@@ -31,16 +31,16 @@
 </div>
 
 <script>
-    var ofertas;
-    var idOfertaSeleccionada;
-    var target;
-    var selectedOfferTitle;
+    let ofertas;
+    let idOfertaSeleccionada;
+    let target;
+    let selectedOfferTitle;
     window.history.pushState("", "", "/cliente.html?w=ofertas");
     $('#filtro-nombre').on('input', function (e) {
-        var ofertasFiltradas = [];
-        var nombreFiltro = $("#filtro-nombre").val();
+        const ofertasFiltradas = [];
+        const nombreFiltro = $("#filtro-nombre").val();
 
-        for (i = 0; i < ofertas.length; i++) {
+        for (let i = 0; i < ofertas.length; i++) {
             if (ofertas[i].title.indexOf(nombreFiltro) != -1) {
                 ofertasFiltradas.push(ofertas[i]);
             }
@@ -93,7 +93,7 @@
 
     function chatsPropios(chatsMostrar) {
         $("#tablaPropias").empty(); // Vaciar la tabla
-        for (i = 0; i < chatsMostrar.length; i++) {
+        for (let i = 0; i < chatsMostrar.length; i++) {
             //selectedOfferTitle = chatsMostrar[i].title;
             $("#tablaPropias").append(
                 "<tr id=" + chatsMostrar[i]._id + ">" +
@@ -109,7 +109,7 @@
 
     function actualizarTabla(ofertasMostrar) {
         $("#tablaCuerpo").empty(); // Vaciar la tabla
-        for (i = 0; i < ofertasMostrar.length; i++) {
+        for (let i = 0; i < ofertasMostrar.length; i++) {
             selectedOfferTitle = ofertasMostrar[i].title;
             $("#tablaCuerpo").append(
                 "<tr id=" + ofertasMostrar[i]._id + ">" +

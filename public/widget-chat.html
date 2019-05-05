@@ -28,15 +28,15 @@
 
     $("#logNav").append("<li id='back' class=\"navbar-brand\"><a onclick=\"back()\">Volver</a></li>");
     window.history.pushState("", "", "/cliente.html?w=chat");
-    var $messages;
-    var last;
+    let $messages;
+    let last;
 
     function back(){
         $("#contenedor-principal").load("widget-ofertas.html");
         $("#back").remove();
     }
     function loadMessages() {
-        var first;
+        let first;
         $.ajax({
             url: URLbase + "/messageList/" + idOfertaSeleccionada,
             type: "GET",
@@ -133,13 +133,13 @@
                 console.log(error);
             }
         });
-    };
+    }
 
     function getMessageText() {
-        var $message_input;
+        let $message_input;
         $message_input = $('.message_input');
         return $message_input.val();
-    };
+    }
 
 
     (function () {
