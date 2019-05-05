@@ -1,4 +1,4 @@
-const lib = require('./lib.js');
+const lib = require('../modules/lib.js');
 
 module.exports = function (app, swig, gestorBD) {
 
@@ -19,13 +19,13 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.post('/usuario', function (req, res) {
-        if (req.body.email == "" || req.body.name == "" || req.body.surname == "" || req.body.password == "" || req.body.confirmPassword == "")
+        if (req.body.email.trim() == "" || req.body.name.trim() == "" || req.body.surname.trim() == "" || req.body.password.trim() == "" || req.body.confirmPassword.trim() == "")
             res.redirect("/registrarse?mensaje=Todos los campos son obligatorios&tipoMensaje=alert-danger");
         else {
             let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
                 .update(req.body.password).digest('hex');
             if (req.body.password === req.body.confirmPassword) {
-                let criterio = {criterio: req.body.email};
+                let criterio = {email: req.body.email};
                 gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                     if (!(usuarios == null || usuarios.length == 0))
                         res.redirect("/registrarse?mensaje=El email ya está registrado&tipoMensaje=alert-danger");

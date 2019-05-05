@@ -1,4 +1,4 @@
-const lib = require('./lib.js');
+const lib = require('../modules/lib.js');
 
 module.exports = function (app, swig, gestorBD) {
 
