@@ -9,10 +9,10 @@
     </div>
     <ul class="messages"></ul>
     <div class="bottom_wrapper clearfix">
-        <div class="message_input_wrapper"><input id="MsInput" class="message_input" placeholder="Escribe aquí tu mensaje"/></div>
+        <div class="message_input_wrapper"><input class="message_input" placeholder="Escribe aquí tu mensaje"/></div>
         <div class="send_message">
             <div class="icon"></div>
-            <div id="sendButton" class="text">Enviar</div>
+            <div class="text">Enviar</div>
         </div>
     </div>
 </div>
@@ -25,21 +25,21 @@
     </li>
 </div>
 <script>
-
     $("#logNav").append("<li id='back' class=\"navbar-brand\"><a onclick=\"back()\">Volver</a></li>");
     window.history.pushState("", "", "/cliente.html?w=chat");
     var $messages;
     var last;
 
-    function back(){
-        window.history.pushState("", "", "/cliente.html?w=ofertas");
+    function back() {
         $("#contenedor-principal").load("widget-ofertas.html");
-        cargarOfertas();
-        cargarChats();
+        $('.messages').empty();
+        window.clearInterval(intervalId);
         $("#back").remove();
+        last="";
     }
+
     function loadMessages() {
-        let first;
+        var first;
         $.ajax({
             url: URLbase + "/messageList/" + idOfertaSeleccionada,
             type: "GET",
@@ -47,7 +47,7 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                //console.log("Carga de mensajes: " + respuesta.messages);
+                console.log("Carga de mensajes: " + respuesta.messages);
                 if (respuesta.buyer) {
                     let mes = respuesta.messages;
                     $('.messages').empty();
@@ -106,13 +106,13 @@
                     return $messages.animate();
             },
             error: function (error) {
-                //Cookies.remove('token');
+                $('.messages').empty();
                 console.log("ESTE: " + error);
             }
         });
     }
 
-    window.setInterval(function () {
+   var intervalId=  window.setInterval(function () {
         loadMessages();
     }, 1000);
 
@@ -136,15 +136,13 @@
                 console.log(error);
             }
         });
-    }
+    };
 
     function getMessageText() {
-        let $message_input;
+        var $message_input;
         $message_input = $('.message_input');
         return $message_input.val();
-    }
-
-
+    };
     (function () {
         $(function () {
             $('.send_message').click(function (e) {
