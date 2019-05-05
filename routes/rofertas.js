@@ -1,7 +1,7 @@
 const lib = require('../modules/lib.js');
 
 module.exports = function (app, swig, gestorBD) {
-
+    let logger = app.get('logger');
     app.get("/ofertas", function (req, res) {
             let criterio = {autor: {$ne: req.session.usuario}};
             if (req.query.busqueda != null) {
@@ -13,6 +13,7 @@ module.exports = function (app, swig, gestorBD) {
             }
             gestorBD.obtenerOfertasPg(criterio, pg, function (ofertas, total) {
                 if (ofertas == null) {
+                    logger.error("Las ofertas paginadas no se cargaron correctamente de la base de datos");
                     res.send("Error al listar ");
                 } else {
                     let ultimaPg = total / 5;
@@ -29,6 +30,7 @@ module.exports = function (app, swig, gestorBD) {
                     params['lsOfertas'] = ofertas;
                     params['paginas'] = paginas;
                     params['actual'] = pg;
+                    logger.trace("Ofertas paginadas cargadas correctamente");
                     res.send(lib.globalRender("views/bofertas.html", params, req.session));
                 }
             });
@@ -41,25 +43,25 @@ module.exports = function (app, swig, gestorBD) {
         let criterio = {autor: req.session.usuario};
         gestorBD.obtenerOfertas(criterio, function (ofertas) {
             if (ofertas == null) {
+                logger.warn("El usuario " + autor + " no tiene ofertas");
                 res.send("Error al del servidor");
-            } else {
-                gestorBD.obtenerCompras({usuario: req.session.usuario}, function (compras) {
-                    if (compras == null)
-                        res.send("Error al del servidor");
-                    else {
-                        let idCompras = [];
-                        for (let i = 0; i < compras.length; i++) {
-                            idCompras.push(compras[i].ofertaId);
-                        }
-                        gestorBD.obtenerOfertas({"_id": {$in: idCompras}}, function (comprasUsuario) {
-                            let params = [];
-                            params['lsOfertas'] = ofertas;
-                            params['lsOfertasCompradas'] = comprasUsuario;
-                            res.send(lib.globalRender("views/bperfil.html", params, req.session));
-                        });
-                    }
-                });
             }
+            gestorBD.obtenerCompras({usuario: req.session.usuario}, function (compras) {
+                if (compras == null) {
+                    logger.warn("El usuario " + autor + " no tiene compras");
+                    res.send("Error al del servidor");
+                }
+                let idCompras = [];
+                for (let i = 0; i < compras.length; i++) {
+                    idCompras.push(compras[i].ofertaId);
+                }
+                gestorBD.obtenerOfertas({"_id": {$in: idCompras}}, function (comprasUsuario) {
+                    let params = [];
+                    params['lsOfertas'] = ofertas;
+                    params['lsOfertasCompradas'] = comprasUsuario;
+                    res.send(lib.globalRender("views/bperfil.html", params, req.session));
+                });
+            });
         });
     });
 
@@ -88,6 +90,7 @@ module.exports = function (app, swig, gestorBD) {
                 // Conectarse
                 gestorBD.insertarOferta(oferta, function (id) {
                     if (id == null) {
+                        logger.error("Ha habido un problema al inertar la oferta en la base de datos");
                         res.redirect("/ofertas/agregar?mensaje=Error del servidor&tipoMensaje=alert-danger")
                     } else {
                         res.redirect("/perfil");
@@ -112,16 +115,17 @@ module.exports = function (app, swig, gestorBD) {
                 req.session.money = req.session.money - price;
                 gestorBD.marcarOfertaComprada({"_id": ofertaId}, function (oferta) {
                     if (oferta == null)
-                        res.send("Error del servidor");
+                        logger.error("Ha habido un problema al marcal la oferta como comprada");
                     else {
                         gestorBD.modificarUsuario({email: req.session.usuario}, req.session.money, function (oferta) {
                             if (oferta == null)
-                                res.send("Error del servidor");
+                                logger.error("Ha habido un problema al modificar el usuario");
                             else {
                                 gestorBD.insertarCompra(compra, function (idCompra) {
                                     if (idCompra == null) {
-                                        res.send("Error del servidor");
+                                        logger.error("Ha habido un problema al inertar la compra en la base de datos");
                                     } else {
+                                        logger.trace("Compra de ña oferta: "+ofertaId+" realizada con exito");
                                         res.redirect("/ofertas");
                                     }
                                 });
@@ -138,8 +142,10 @@ module.exports = function (app, swig, gestorBD) {
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         gestorBD.eliminarOferta(criterio, function (ofertas) {
             if (ofertas == null) {
+                logger.error("Intento de eliminar oferta inexistente");
                 res.send("Error del servidor");
             } else {
+                logger.trace("Oferta eliminada correctamente");
                 res.redirect("/perfil");
             }
         });

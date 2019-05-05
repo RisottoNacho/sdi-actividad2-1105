@@ -28,11 +28,14 @@
 
     $("#logNav").append("<li id='back' class=\"navbar-brand\"><a onclick=\"back()\">Volver</a></li>");
     window.history.pushState("", "", "/cliente.html?w=chat");
-    let $messages;
-    let last;
+    var $messages;
+    var last;
 
     function back(){
+        window.history.pushState("", "", "/cliente.html?w=ofertas");
         $("#contenedor-principal").load("widget-ofertas.html");
+        cargarOfertas();
+        cargarChats();
         $("#back").remove();
     }
     function loadMessages() {

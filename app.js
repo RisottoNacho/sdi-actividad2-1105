@@ -12,7 +12,16 @@ app.set('jwt', jwt);
 const http = require('http');
 
 const log4js = require('log4js');
-let logger = log4js.getLogger();
+log4js.configure({
+    appenders: {
+        out: { type: 'stdout' },
+        app: { type: 'file', filename: 'application.log' }
+    },
+    categories: {
+        default: { appenders: [ 'out', 'app' ], level: 'trace' }
+    }
+});
+let logger = log4js.getLogger('stdout');
 
 const expressSession = require('express-session');
 app.use(expressSession({
@@ -195,6 +204,7 @@ app.use("/oferta/comprar", routerUsuarioNoAutor);
 
 app.use(express.static('public'));
 // Variables
+app.set('logger',logger);
 app.set('port', 8081);
 app.set('db', 'mongodb://admin:sdi@tiendamusica-shard-00-00-48dwf.mongodb.net:27017,tiendamusica-shard-00-01-48dwf.mongodb.net:27017,tiendamusica-shard-00-02-48dwf.mongodb.net:27017/test?ssl=true&replicaSet=tiendamusica-shard-0&authSource=admin&retryWrites=true');
 app.set('clave', 'abcdefg');

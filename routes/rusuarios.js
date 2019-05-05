@@ -1,12 +1,15 @@
 const lib = require('../modules/lib.js');
 
 module.exports = function (app, swig, gestorBD) {
-
+    let logger = app.get('logger');
     app.get("/usuarios", function (req, res) {
         let criterio = {
             email: {$ne: "admin@email.com"}
         };
         gestorBD.obtenerUsuarios(criterio, function (users) {
+            if (users == null) {
+                logger.error("No hay usuarios en el sistema");
+            }
             const params = [];
             params['lsusers'] = users;
             res.send(lib.globalRender('views/busuarios.html', params, req.session));
@@ -41,6 +44,7 @@ module.exports = function (app, swig, gestorBD) {
                             if (id == null) {
                                 res.redirect("/registrarse?mensaje=Error del servidor&tipoMensaje=alert-danger");
                             } else {
+                                logger.trace("Nuevo usuario registrado con id: " + id)
                                 res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
                             }
                         });
@@ -79,9 +83,11 @@ module.exports = function (app, swig, gestorBD) {
                     req.session.usuario = usuarios[0].email;
                     req.session.money = usuarios[0].money;
                     if (usuarios[0].email == "admin@email.com") {
+                        logger.trace("Usuario identificado como administrador");
                         req.session.role = 'admin';
                         res.redirect("/usuarios");
                     } else {
+                        logger.trace("Usuario identificado como usuario estándar");
                         req.session.role = 'standardUser';
                         res.redirect("/perfil");
                     }
@@ -126,6 +132,7 @@ module.exports = function (app, swig, gestorBD) {
                         };
                         gestorBD.eliminarCompras(cr4, function (err, result) {
                             gestorBD.eliminarUsuario(criterio, function () {
+                                logger.trace("Borrado de usuario stisfactorio");
                                 res.redirect("/usuarios");
                             });
                         })
@@ -137,6 +144,7 @@ module.exports = function (app, swig, gestorBD) {
     });
 
     app.get('/desconectarse', function (req, res) {
+        logger.trace("Usuario:" + req.session.usuario + " cierra la sesión");
         req.session.usuario = null;
         req.session.money = null;
         req.session.role = null;
