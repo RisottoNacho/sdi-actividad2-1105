@@ -14,13 +14,15 @@ module.exports = function (app, gestorBD) {
         };
         gestorBD.obtenerOfertas(criterio, function (ofertas) {
             criterio = {
-                "offer": req.params.offer
+                "offer": req.params.offer,
+                "buyer": user
             };
             if (ofertas == null || ofertas.length == 0) {
                 res.status(500);
                 res.json({
                     error: "Error de la base de datos o oferta inexistente"
                 });
+                s
             } else if (user == ofertas[0].autor) {
                 gestorBD.obtenerChats(criterio, function (chats) {
                     if (chats == null || chats.length == 0) {
@@ -30,9 +32,7 @@ module.exports = function (app, gestorBD) {
                         });
                     } else {
                         res.status(200);
-                        res.json({
-                            chats: chats
-                        });
+                        res.send(JSON.stringify(chats));
                     }
                 });
             } else {
@@ -44,9 +44,12 @@ module.exports = function (app, gestorBD) {
                         });
                     } else {
                         res.status(200);
-                        res.json({
+                        let result = {
+                            buyer: true,
                             messages: chat.messages
-                        });
+                        };
+                        //console.log(result);
+                        res.send(JSON.stringify(result));
                     }
                 });
             }
@@ -110,6 +113,25 @@ module.exports = function (app, gestorBD) {
         let user = res.usuario;
         console.log(user);
         gestorBD.obtenerOfertas({autor: {$ne: user}}, function (ofertas) {
+            if (ofertas == null) {
+                res.status(500);
+                res.json({
+                    error: "se ha producido un error"
+                })
+            } else {
+                res.status(200);
+                res.send(JSON.stringify(ofertas));
+                /*res.json({
+                    ofertas: ofertas
+                })*/
+            }
+        });
+    });
+
+    app.get("/api/ofertasPropias", function (req, res) {
+        let user = res.usuario;
+        console.log(user);
+        gestorBD.obtenerOfertas({autor: user}, function (ofertas) {
             if (ofertas == null) {
                 res.status(500);
                 res.json({

@@ -15,11 +15,28 @@
 
         </tbody>
     </table>
+
+    <h2>Chats de tus ofertas</h2>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>>Titulo</th>
+            <th>Descripcion</th>
+            <th>Precio</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody id="tablaPropias">
+
+        </tbody>
+    </table>
 </div>
 
 <script>
     var ofertas;
     var idOfertaSeleccionada;
+    var target;
+    var selectedOfferTitle;
     window.history.pushState("", "", "/cliente.html?w=ofertas");
     $('#filtro-nombre').on('input', function (e) {
         var ofertasFiltradas = [];
@@ -47,27 +64,78 @@
                 actualizarTabla(ofertas);
             },
             error: function (error) {
+                console.log("Error: "+error);
+            }
+        });
+    }
+
+    function chat(_id, autor) {
+        idOfertaSeleccionada = _id;
+        target = autor;
+        $("#contenedor-principal").load("widget-chat.html");
+    }
+
+    function cargarChats() {
+        $.ajax({
+            url: URLbase + "/ofertasPropias",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                let chats = [];
+                for (let i = 0; i < respuesta.length; i++) {
+                    $.ajax({
+                        url: URLbase + "/messageList/" + respuesta[i]._id.toString(),
+                        type: "GET",
+                        data: {},
+                        dataType: 'json',
+                        headers: {"token": token},
+                        success: function (resp) {
+                            chats.concat(resp);
+                        },
+                        error: function (error) {
+                            console.log("Error: "+error);
+                        }
+                    });
+                }
+            },
+            error: function (error) {
                 Cookies.remove('token');
                 $("#contenedor-principal").load("widget-login.html");
             }
         });
     }
 
-    function chat(_id) {
-        idOfertaSeleccionada = _id;
-        $("#contenedor-principal").load("widget-chat.html");
+    function chatsPropios(chatsMostrar) {
+        $("#tablaPropias").empty(); // Vaciar la tabla
+        for (i = 0; i < chatsMostrar.length; i++) {
+            selectedOfferTitle = chatsMostrar[i].title;
+            $("#tablaCuerpo").append(
+                "<tr id=" + chatsMostrar[i]._id + ">" +
+                "<td>" + chatsMostrar[i].title + "</td>" +
+                "<td>" + chatsMostrar[i].description + "</td>" +
+                "<td>" + chatsMostrar[i].price + "</td>" +
+                "<td>" +
+                "<a onclick=chat('" + chatsMostrar[i]._id + "','" + chatsMostrar[i].autor + "')>Chatear</a><br>" +
+                "</td>" +
+                "</tr>");
+            // Mucho cuidado con las comillas del eliminarOferta
+            //la id tiene que ir entre comillas ' '
+        }
     }
 
     function actualizarTabla(ofertasMostrar) {
         $("#tablaCuerpo").empty(); // Vaciar la tabla
         for (i = 0; i < ofertasMostrar.length; i++) {
+            selectedOfferTitle = ofertasMostrar[i].title;
             $("#tablaCuerpo").append(
                 "<tr id=" + ofertasMostrar[i]._id + ">" +
                 "<td>" + ofertasMostrar[i].title + "</td>" +
                 "<td>" + ofertasMostrar[i].description + "</td>" +
                 "<td>" + ofertasMostrar[i].price + "</td>" +
                 "<td>" +
-                "<a onclick=chat('" + ofertasMostrar[i]._id + "')>Chatear</a><br>" +
+                "<a onclick=chat('" + ofertasMostrar[i]._id + "','" + ofertasMostrar[i].autor + "')>Chatear</a><br>" +
                 "</td>" +
                 "</tr>");
             // Mucho cuidado con las comillas del eliminarOferta

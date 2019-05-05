@@ -5,14 +5,14 @@
             <div class="button minimize"></div>
             <div class="button maximize"></div>
         </div>
-        <div class="title">Chat</div>
+        <div id="ttl" class="title"></div>
     </div>
     <ul class="messages"></ul>
     <div class="bottom_wrapper clearfix">
-        <div class="message_input_wrapper"><input class="message_input" placeholder="Type your message here..."/></div>
+        <div class="message_input_wrapper"><input class="message_input" placeholder="Escribe aquí tu mensaje"/></div>
         <div class="send_message">
             <div class="icon"></div>
-            <div class="text">Send</div>
+            <div class="text">Enviar</div>
         </div>
     </div>
 </div>
@@ -24,3 +24,107 @@
         </div>
     </li>
 </div>
+<script>
+
+    window.history.pushState("", "", "/cliente.html?w=chat");
+    var $messages;
+    let executed = false;
+    var something = (function() {
+        return function() {
+            if (!executed) {
+                executed = true;
+                loadMessages(true);
+            }
+        };
+    })();
+    something();
+    function loadMessages(first) {
+        $.ajax({
+            url: URLbase + "/messageList/" + idOfertaSeleccionada,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                console.log("Carga de mensajes: " + respuesta.messages);
+                if (respuesta.buyer) {
+                    let mes = respuesta.messages;
+                    $('.messages').empty();
+                    for (let i = 0; i < mes.length; i++) {
+                        let side;
+                        if (mes[i].sender == target)
+                            side = 'left';
+                        else
+                            side = 'right';
+                        $('.messages').append("<li class=\"message right appeared\">\n" +
+                            "        <div class=\"avatar\"></div>\n" +
+                            "        <div class=\"text_wrapper\">\n" +
+                            "            <div class=\"text\">" + mes[i].text + "</div>\n" +
+                            "        </div>\n" +
+                            "    </li>")
+                    }
+                }
+                $messages = $('.messages');
+                if (first)
+                    return $messages.animate({scrollTop: $messages.prop('scrollHeight')}, 300);
+                else
+                    return $messages.animate();
+            },
+            error: function (error) {
+                //Cookies.remove('token');
+                console.log(error);
+            }
+        });
+    }
+
+    window.setInterval(function () {
+        loadMessages(false);
+    }, 2000);
+
+    window.setInterval(function () {
+        loadMessages(true);
+    }, 10000);
+
+    function sendMessage(text) {
+        if (text.trim() === '') {
+            return;
+        }
+        $.ajax({
+            url: URLbase + "/sendMessage/" + text + "/" + target + "/" + idOfertaSeleccionada,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                loadMessages(true);
+                $('.message_input').val('');
+                $messages = $('.messages');
+            },
+            error: function (error) {
+                //Cookies.remove('token');
+                console.log(error);
+            }
+        });
+    };
+
+    function getMessageText() {
+        var $message_input;
+        $message_input = $('.message_input');
+        return $message_input.val();
+    };
+
+
+    (function () {
+        $(function () {
+            $('.send_message').click(function (e) {
+                return sendMessage(getMessageText());
+            });
+            $('.message_input').keyup(function (e) {
+                if (e.which === 13) {
+                    return sendMessage(getMessageText());
+                }
+            });
+        });
+    }.call(this));
+    document.getElementById("ttl").innerHTML = "Chat con " + target + " sobre " + selectedOfferTitle;
+</script>

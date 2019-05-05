@@ -27,7 +27,8 @@
             <ul class="nav navbar-nav">
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
-                <li class="navbar-brand" ><a onclick="cerrarChat()"><span class="glyphicon glyphicon-log-out"></span> Salir de la sala</a></li>
+                <li class="navbar-brand"><a onclick="cerrarChat()"><span class="glyphicon glyphicon-log-out"></span>
+                    Salir de la sala</a></li>
             </ul>
         </div>
     </div>
@@ -54,6 +55,9 @@
         }
         if (w == "ofertas") {
             $("#contenedor-principal").load("widget-ofertas.html");
+        }
+        if (w == "chat") {
+            $("#contenedor-principal").load("widget-chat.html");
         }
 
         function cerrarChat() {
