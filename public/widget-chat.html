@@ -26,19 +26,15 @@
 </div>
 <script>
 
+    $("#logNav").append("<li id='back' class=\"navbar-brand\"><a onclick=\"back()\">Volver</a></li>");
     window.history.pushState("", "", "/cliente.html?w=chat");
     var $messages;
-    let executed = false;
-  /*  var something = (function () {
-        return function () {
-            if (!executed) {
-                executed = true;
-                loadMessages(true);
-            }
-        };
-    })();
-    something();*/
-var last;
+    var last;
+
+    function back(){
+        $("#contenedor-principal").load("widget-ofertas.html");
+        $("#back").remove();
+    }
     function loadMessages() {
         var first;
         $.ajax({
@@ -64,8 +60,8 @@ var last;
                             "            <div class=\"text\">" + mes[i].text + "</div>\n" +
                             "        </div>\n" +
                             "    </li>");
-                        if(i == mes.length-1) {
-                            if(last == mes[i].text)
+                        if (i == mes.length - 1) {
+                            if (last == mes[i].text)
                                 first = false;
                             else
                                 first = true;
@@ -91,8 +87,8 @@ var last;
                             "            <div class=\"text\">" + messages[i].text + "</div>\n" +
                             "        </div>\n" +
                             "    </li>");
-                        if(i == messages.length-1) {
-                            if(last == messages[i].text)
+                        if (i == messages.length - 1) {
+                            if (last == messages[i].text)
                                 first = false;
                             else
                                 first = true;
@@ -108,7 +104,7 @@ var last;
             },
             error: function (error) {
                 //Cookies.remove('token');
-                console.log("ESTE: "+error);
+                console.log("ESTE: " + error);
             }
         });
     }
