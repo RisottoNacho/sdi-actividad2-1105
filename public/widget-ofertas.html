@@ -1,8 +1,7 @@
-<div id="widget-canciones">
+<div id="widget-ofertas">
     <input type="text" class="form-control" placeholder="Filtrar por nombre"
            id="filtro-nombre"/>
-    <button class="btn btn-primary" onclick="widgetAgregar()">Nueva Canción</button>
-    <button class="btn" onclick="cargarCanciones()">Actualizar</button>
+    <button class="btn" onclick="cargarOfertas()">Actualizar</button>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -19,99 +18,55 @@
 </div>
 
 <script>
-    var canciones;
+    var ofertas;
     window.history.pushState("", "", "/cliente.html?w=ofertas");
     $('#filtro-nombre').on('input', function (e) {
         var cancionesFiltradas = [];
         var nombreFiltro = $("#filtro-nombre").val();
 
-        for (i = 0; i < canciones.length; i++) {
-            if (canciones[i].nombre.indexOf(nombreFiltro) != -1) {
-                cancionesFiltradas.push(canciones[i]);
+        for (i = 0; i < ofertas.length; i++) {
+            if (ofertas[i].nombre.indexOf(nombreFiltro) != -1) {
+                cancionesFiltradas.push(ofertas[i]);
             }
         }
         actualizarTabla(cancionesFiltradas);
     });
 
-    var precioDsc = true;
 
-    function ordenarPorPrecio() {
-        if (precioDsc) {
-            canciones.sort(function (a, b) {
-                return parseFloat(a.precio) - parseFloat(b.precio);
-            });
-        } else {
-            canciones.sort(function (a, b) {
-                return parseFloat(b.precio) - parseFloat(a.precio);
-            });
-        }
-        actualizarTabla(canciones);
-        precioDsc = !precioDsc; //invertir
-    }
-
-    function ordenarPorNombre() {
-        canciones.sort(function (a, b) {
-            if (a.nombre > b.nombre) return 1;
-            if (a.nombre < b.nombre) return -1;
-            return 0;
-        });
-        actualizarTabla(canciones);
-    }
-
-    function cargarCanciones() {
+    function cargarOfertas() {
         $.ajax({
-            url: URLbase + "/cancion",
+            url: URLbase + "/ofertas",
             type: "GET",
             data: {},
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                canciones = respuesta;
-                actualizarTabla(canciones);
+                ofertas = respuesta;
+                console.log(ofertas);
+                actualizarTabla(ofertas);
             },
             error: function (error) {
+                Cookies.remove('token');
                 $("#contenedor-principal").load("widget-login.html");
             }
         });
     }
 
-    function widgetAgregar() {
-        $("#contenedor-principal").load("widget-agregar.html");
-    }
-
-    function eliminar(_id) {
-        $.ajax({
-            url: URLbase + "/cancion/" + _id,
-            type: "DELETE",
-            data: {},
-            dataType: 'json',
-            headers: {"token": token},
-            success: function (respuesta) {
-                console.log("Eliminada: " + _id);
-                $("#" + _id).remove(); // eliminar el <tr> de la canción
-            },
-            error: function (error) {
-                $("#contenedor-principal").load("widget-login.html");
-            }
-        });
-    }
-
-    function detalles(_id) {
-        idCancionSeleccionada = _id;
+    function chat(_id) {
+        idOfertaSeleccionada = _id;
         $("#contenedor-principal").load("widget-detalles.html");
     }
 
-    function actualizarTabla(cancionesMostrar) {
+    function actualizarTabla(ofertasMostrar) {
         $("#tablaCuerpo").empty(); // Vaciar la tabla
-        for (i = 0; i < cancionesMostrar.length; i++) {
+        for (i = 0; i < ofertasMostrar.length; i++) {
             $("#tablaCuerpo").append(
-                "<tr id=" + cancionesMostrar[i]._id + ">" +
-                "<td>" + cancionesMostrar[i].nombre + "</td>" +
-                "<td>" + cancionesMostrar[i].genero + "</td>" +
-                "<td>" + cancionesMostrar[i].precio + "</td>" +
+                "<tr id=" + ofertasMostrar[i]._id + ">" +
+                "<td>" + ofertasMostrar[i].title + "</td>" +
+                "<td>" + ofertasMostrar[i].description + "</td>" +
+                "<td>" + ofertasMostrar[i].price + "</td>" +
                 "<td>" +
-                "<a onclick=detalles('" + cancionesMostrar[i]._id + "')>Detalles</a><br>" +
-                "<a onclick=eliminar('" + cancionesMostrar[i]._id + "')>Eliminar</a>" +
+                "<a onclick=chat('" + ofertasMostrar[i]._id + "')>Chatear</a><br>" +
                 "</td>" +
                 "</tr>");
             // Mucho cuidado con las comillas del eliminarOferta
@@ -119,5 +74,5 @@
         }
     }
 
-    cargarCanciones();
+    cargarOfertas();
 </script>

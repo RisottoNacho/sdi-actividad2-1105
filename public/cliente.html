@@ -29,7 +29,7 @@
                 <li class="navbar-brand" id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
-                <li class="navbar-brand" ><a href="/desconectarse"><span class="glyphicon glyphicon-log-out"></span> Desconectar</a></li>
+                <li class="navbar-brand" ><a onclick="cerrarChat()"><span class="glyphicon glyphicon-log-out"></span> Salir de la sala</a></li>
             </ul>
         </div>
     </div>
@@ -60,8 +60,7 @@
 
         function cerrarChat() {
             Cookies.remove('token');
-            $("#widget-login")
-                .prepend("<div class='alert alert-primary'>Has salido de la sala de chat</div>");
+            $("#contenedor-principal").load("widget-login.html");
         }
 
         function widgetCanciones() {

@@ -44,8 +44,10 @@ gestorBD.init(app, mongo);
 // routerUsuarioToken
 var routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function (req, res, next) {
+    console.log("routerUsuarioToken");
     // obtener el token, vía headers (opcionalmente GET y/o POST).
     let token = req.headers['token'] || req.body.token || req.query.token;
+    console.log(token.usuario);
     if (token != null) {
         // verificar el token
         jwt.verify(token, 'secreto', function (err, infoToken) {
@@ -74,8 +76,9 @@ routerUsuarioToken.use(function (req, res, next) {
     }
 });
 // Aplicar routerUsuarioToken
-//app.use('/api/sendMessage', routerUsuarioToken);
-//app.use('/api/ofertas', routerUsuarioToken);
+app.use('/api/sendMessage', routerUsuarioToken);
+app.use('/api/ofertas', routerUsuarioToken);
+app.use('/api/messageList', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();

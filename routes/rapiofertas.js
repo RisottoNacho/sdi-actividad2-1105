@@ -8,7 +8,7 @@ module.exports = function (app, gestorBD) {
         });*/
 
     app.get("/api/messageList/:offer", function (req, res) {
-        let user = req.session.usuario;
+        let user = res.usuario;
         let criterio = {
             "_id": gestorBD.mongo.ObjectID(req.params.offer)
         };
@@ -54,7 +54,7 @@ module.exports = function (app, gestorBD) {
     });
 
     app.get("/api/sendMessage/:text/:target/:offer", function (req, res) {
-        let user = req.session.usuario;
+        let user = res.usuario;
         if (user == req.params.target) {
             res.status(500);
             res.json({
@@ -107,7 +107,8 @@ module.exports = function (app, gestorBD) {
     });
 
     app.get("/api/ofertas", function (req, res) {
-        let user = req.session.ususario;
+        let user = res.usuario;
+        console.log(user);
         gestorBD.obtenerOfertas({autor: {$ne: user}}, function (ofertas) {
             if (ofertas == null) {
                 res.status(500);
@@ -117,6 +118,9 @@ module.exports = function (app, gestorBD) {
             } else {
                 res.status(200);
                 res.send(JSON.stringify(ofertas));
+                /*res.json({
+                    ofertas: ofertas
+                })*/
             }
         });
     });
