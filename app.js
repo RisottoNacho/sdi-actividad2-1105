@@ -179,10 +179,10 @@ routerUsuarioNoAutor.use(function (req, res, next) {
     gestorBD.obtenerOfertas(
         {_id: mongo.ObjectID(id)}, function (ofertas) {
             console.log(ofertas[0]);
-            if (ofertas[0].autor != req.session.usuario) {
+            if (ofertas[0].autor != req.session.usuario && ofertas[0].price == price) {
                 next();
             } else {
-                res.redirect("/ofertas?mensaje=No puedes comprar tus propias ofertas&tipoMensaje=alert-danger \"");
+                res.redirect("/ofertas?mensaje=No puedes comprar tus propias ofertas ni trampear el precio&tipoMensaje=alert-danger \"");
             }
         })
 });

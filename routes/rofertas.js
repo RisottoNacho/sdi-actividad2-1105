@@ -69,7 +69,7 @@ module.exports = function (app, swig, gestorBD) {
 
     //VALIDAR SIEMPRE EN SEVIDOR
     app.post("/oferta", function (req, res) {
-        if (req.body.titulo == "" || req.body.descripcion == "" || req.body.precio == "")
+        if (req.body.titulo == "" || req.body.descripcion == "" || req.body.precio == "" || isNaN(req.body.precio))
             res.redirect("/ofertas/agregar?mensaje=Todos los campos son obligatorios&tipoMensaje=alert-danger");
         else {
             let oferta = {
