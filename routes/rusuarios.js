@@ -108,8 +108,30 @@ module.exports = function (app, swig, gestorBD) {
             "_id": {$in: lsDel}
         };
         if (!(lsDel == null || lsDel.length == 0)) {
-            gestorBD.eliminarUsuario(criterio, function () {
-                res.redirect("/usuarios");
+            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                let ls = [];
+                for (let i = 0; i < usuarios.length; i++) {
+                    ls.push(usuarios[i].email);
+                }
+                let cr2 = {
+                    $or: [{owner: {$in: ls}}, {buyer: {$in: ls}}]
+                };
+                gestorBD.eliminarChats(cr2, function (err, result) {
+                    let cr3 = {
+                        autor: {$in: ls}
+                    };
+                    gestorBD.eliminarOfertas(cr3, function (err, result) {
+                        let cr4 = {
+                            usuario: {$in: ls}
+                        };
+                        gestorBD.eliminarCompras(cr4, function (err, result) {
+                            gestorBD.eliminarUsuario(criterio, function () {
+                                res.redirect("/usuarios");
+                            });
+                        })
+                    })
+
+                });
             });
         }
     });

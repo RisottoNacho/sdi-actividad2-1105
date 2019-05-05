@@ -72,7 +72,7 @@ module.exports = {
                 });
             }
         });
-    },obtenerChat: function (criterio, funcionCallback) {
+    }, obtenerChat: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -88,7 +88,7 @@ module.exports = {
                 });
             }
         });
-    },obtenerChats: function (criterio, funcionCallback) {
+    }, obtenerChats: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -112,22 +112,6 @@ module.exports = {
             } else {
                 let collection = db.collection('ofertas');
                 collection.update(criterio, {$set: {"sold": true}}, function (err, result) {
-                    if (err) {
-                        funcionCallback(null);
-                    } else {
-                        funcionCallback(result);
-                    }
-                    db.close();
-                });
-            }
-        });
-    }, modificarOferta: function (criterio, oferta, funcionCallback) {
-        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
-            if (err) {
-                funcionCallback(null);
-            } else {
-                let collection = db.collection('ofertas');
-                collection.update(criterio, {$set: {"buyed": true}}, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {
@@ -187,6 +171,22 @@ module.exports = {
                 });
             }
         });
+    }, eliminarChats: function (criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('chats');
+                collection.deleteMany(criterio, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
     },
     eliminarOferta: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
@@ -195,6 +195,38 @@ module.exports = {
             } else {
                 var collection = db.collection('ofertas');
                 collection.remove(criterio, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    }, eliminarOfertas: function (criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('ofertas');
+                collection.deleteMany(criterio, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    }, eliminarCompras: function (criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('compras');
+                collection.deleteMany(criterio, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {
