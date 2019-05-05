@@ -99,7 +99,7 @@
                 "<tr id=" + chatsMostrar[i]._id + ">" +
                 "<td>" + chatsMostrar[i].buyer + "</td>" +
                 "<td>" +
-                "<a onclick=chat('" + chatsMostrar[i].offer + "','" + chatsMostrar[i].buyer + "')>Chatear</a><br>" +
+                "<a name='chatBuyer' onclick=chat('" + chatsMostrar[i].offer + "','" + chatsMostrar[i].buyer + "')>Chatear</a><br>" +
                 "</td>" +
                 "</tr>");
             // Mucho cuidado con las comillas del eliminarOferta
@@ -117,7 +117,7 @@
                 "<td>" + ofertasMostrar[i].description + "</td>" +
                 "<td>" + ofertasMostrar[i].price + "</td>" +
                 "<td>" +
-                "<a onclick=chat('" + ofertasMostrar[i]._id + "','" + ofertasMostrar[i].autor + "')>Chatear</a><br>" +
+                "<a name='chatSeller' onclick=chat('" + ofertasMostrar[i]._id + "','" + ofertasMostrar[i].autor + "')>Chatear</a><br>" +
                 "</td>" +
                 "</tr>");
             // Mucho cuidado con las comillas del eliminarOferta
