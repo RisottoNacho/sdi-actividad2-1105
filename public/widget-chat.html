@@ -29,16 +29,18 @@
     window.history.pushState("", "", "/cliente.html?w=chat");
     var $messages;
     let executed = false;
-    var something = (function() {
-        return function() {
+  /*  var something = (function () {
+        return function () {
             if (!executed) {
                 executed = true;
                 loadMessages(true);
             }
         };
     })();
-    something();
-    function loadMessages(first) {
+    something();*/
+var last;
+    function loadMessages() {
+        var first;
         $.ajax({
             url: URLbase + "/messageList/" + idOfertaSeleccionada,
             type: "GET",
@@ -56,12 +58,46 @@
                             side = 'left';
                         else
                             side = 'right';
-                        $('.messages').append("<li class=\"message right appeared\">\n" +
+                        $('.messages').append("<li class=\"message " + side + " appeared\">\n" +
                             "        <div class=\"avatar\"></div>\n" +
                             "        <div class=\"text_wrapper\">\n" +
                             "            <div class=\"text\">" + mes[i].text + "</div>\n" +
                             "        </div>\n" +
-                            "    </li>")
+                            "    </li>");
+                        if(i == mes.length-1) {
+                            if(last == mes[i].text)
+                                first = false;
+                            else
+                                first = true;
+                            last = mes[i].text;
+                        }
+                    }
+                } else {
+                    let messages;
+                    $('.messages').empty();
+                    for (let i = 0; i < respuesta.length; i++) {
+                        if (respuesta[i].buyer == target)
+                            messages = respuesta[i].messages;
+                    }
+                    for (let i = 0; i < messages.length; i++) {
+                        let side;
+                        if (messages[i].sender == target)
+                            side = 'left';
+                        else
+                            side = 'right';
+                        $('.messages').append("<li class=\"message " + side + " appeared\">\n" +
+                            "        <div class=\"avatar\"></div>\n" +
+                            "        <div class=\"text_wrapper\">\n" +
+                            "            <div class=\"text\">" + messages[i].text + "</div>\n" +
+                            "        </div>\n" +
+                            "    </li>");
+                        if(i == messages.length-1) {
+                            if(last == messages[i].text)
+                                first = false;
+                            else
+                                first = true;
+                            last = messages[i].text;
+                        }
                     }
                 }
                 $messages = $('.messages');
@@ -72,18 +108,14 @@
             },
             error: function (error) {
                 //Cookies.remove('token');
-                console.log(error);
+                console.log("ESTE: "+error);
             }
         });
     }
 
     window.setInterval(function () {
-        loadMessages(false);
-    }, 2000);
-
-    window.setInterval(function () {
-        loadMessages(true);
-    }, 10000);
+        loadMessages();
+    }, 1000);
 
     function sendMessage(text) {
         if (text.trim() === '') {
@@ -126,5 +158,5 @@
             });
         });
     }.call(this));
-    document.getElementById("ttl").innerHTML = "Chat con " + target + " sobre " + selectedOfferTitle;
+    document.getElementById("ttl").innerHTML = "Chat con " + target;
 </script>

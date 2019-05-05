@@ -78,7 +78,9 @@ routerUsuarioToken.use(function (req, res, next) {
 // Aplicar routerUsuarioToken
 app.use('/api/sendMessage', routerUsuarioToken);
 app.use('/api/ofertas', routerUsuarioToken);
+app.use('/api/ofertasPropias', routerUsuarioToken);
 app.use('/api/messageList', routerUsuarioToken);
+app.use('/api/chats', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();

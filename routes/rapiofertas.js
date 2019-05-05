@@ -24,6 +24,9 @@ module.exports = function (app, gestorBD) {
                 });
                 s
             } else if (user == ofertas[0].autor) {
+                criterio = {
+                    "offer": req.params.offer
+                };
                 gestorBD.obtenerChats(criterio, function (chats) {
                     if (chats == null || chats.length == 0) {
                         res.status(500);
@@ -52,6 +55,22 @@ module.exports = function (app, gestorBD) {
                         res.send(JSON.stringify(result));
                     }
                 });
+            }
+        });
+    });
+
+    app.get("/api/chats", function (req, res) {
+        let user = res.usuario;
+        gestorBD.obtenerChats({owner: user}, function (chats) {
+            if (chats == null || chats.length == 0) {
+                //console.log("ahh "+chats);
+                res.status(500);
+                res.json({
+                    error: "No hay chats para este usuario"
+                });
+            } else {
+                res.status(200);
+                res.send(JSON.stringify(chats));
             }
         });
     });

@@ -20,9 +20,7 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>>Titulo</th>
-            <th>Descripcion</th>
-            <th>Precio</th>
+            <th>Interesado</th>
             <th class="col-md-1"></th>
         </tr>
         </thead>
@@ -64,45 +62,31 @@
                 actualizarTabla(ofertas);
             },
             error: function (error) {
-                console.log("Error: "+error);
+                console.log("Error: " + error);
             }
         });
     }
 
-    function chat(_id, autor) {
+    function chat(_id, user) {
         idOfertaSeleccionada = _id;
-        target = autor;
+        target = user;
         $("#contenedor-principal").load("widget-chat.html");
     }
 
     function cargarChats() {
         $.ajax({
-            url: URLbase + "/ofertasPropias",
+            url: URLbase + "/chats",
             type: "GET",
             data: {},
             dataType: 'json',
             headers: {"token": token},
-            success: function (respuesta) {
-                let chats = [];
-                for (let i = 0; i < respuesta.length; i++) {
-                    $.ajax({
-                        url: URLbase + "/messageList/" + respuesta[i]._id.toString(),
-                        type: "GET",
-                        data: {},
-                        dataType: 'json',
-                        headers: {"token": token},
-                        success: function (resp) {
-                            chats.concat(resp);
-                        },
-                        error: function (error) {
-                            console.log("Error: "+error);
-                        }
-                    });
-                }
+            success: function (chats) {
+                chatsPropios(chats);
+                console.log("adsd: "+chats);
             },
             error: function (error) {
-                Cookies.remove('token');
-                $("#contenedor-principal").load("widget-login.html");
+                //Cookies.remove('token');
+                console.log("Error 4: " + error);
             }
         });
     }
@@ -110,14 +94,12 @@
     function chatsPropios(chatsMostrar) {
         $("#tablaPropias").empty(); // Vaciar la tabla
         for (i = 0; i < chatsMostrar.length; i++) {
-            selectedOfferTitle = chatsMostrar[i].title;
-            $("#tablaCuerpo").append(
+            //selectedOfferTitle = chatsMostrar[i].title;
+            $("#tablaPropias").append(
                 "<tr id=" + chatsMostrar[i]._id + ">" +
-                "<td>" + chatsMostrar[i].title + "</td>" +
-                "<td>" + chatsMostrar[i].description + "</td>" +
-                "<td>" + chatsMostrar[i].price + "</td>" +
+                "<td>" + chatsMostrar[i].buyer + "</td>" +
                 "<td>" +
-                "<a onclick=chat('" + chatsMostrar[i]._id + "','" + chatsMostrar[i].autor + "')>Chatear</a><br>" +
+                "<a onclick=chat('" + chatsMostrar[i].offer + "','" + chatsMostrar[i].buyer + "')>Chatear</a><br>" +
                 "</td>" +
                 "</tr>");
             // Mucho cuidado con las comillas del eliminarOferta
@@ -144,4 +126,5 @@
     }
 
     cargarOfertas();
+    cargarChats();
 </script>
