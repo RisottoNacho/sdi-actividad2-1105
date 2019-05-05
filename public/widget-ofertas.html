@@ -19,17 +19,18 @@
 
 <script>
     var ofertas;
+    var idOfertaSeleccionada;
     window.history.pushState("", "", "/cliente.html?w=ofertas");
     $('#filtro-nombre').on('input', function (e) {
-        var cancionesFiltradas = [];
+        var ofertasFiltradas = [];
         var nombreFiltro = $("#filtro-nombre").val();
 
         for (i = 0; i < ofertas.length; i++) {
-            if (ofertas[i].nombre.indexOf(nombreFiltro) != -1) {
-                cancionesFiltradas.push(ofertas[i]);
+            if (ofertas[i].title.indexOf(nombreFiltro) != -1) {
+                ofertasFiltradas.push(ofertas[i]);
             }
         }
-        actualizarTabla(cancionesFiltradas);
+        actualizarTabla(ofertasFiltradas);
     });
 
 
@@ -54,7 +55,7 @@
 
     function chat(_id) {
         idOfertaSeleccionada = _id;
-        $("#contenedor-principal").load("widget-detalles.html");
+        $("#contenedor-principal").load("widget-chat.html");
     }
 
     function actualizarTabla(ofertasMostrar) {

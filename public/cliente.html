@@ -5,6 +5,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./style/chat.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="/js/cookie.js"></script>
@@ -24,9 +25,6 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-                <li class="navbar-brand" id="mPerfil"><a href="/perfil">Mi Perfil</a></li>
-                <li class="navbar-brand" id="mCompras"><a href="/ofertas">Comprar Ofertas</a></li>
-                <li class="navbar-brand" id="mNuevaOferta"><a href="/ofertas/agregar">Crear Oferta</a></li>
             </ul>
             <ul id="logNav" class="nav navbar-nav navbar-right">
                 <li class="navbar-brand" ><a onclick="cerrarChat()"><span class="glyphicon glyphicon-log-out"></span> Salir de la sala</a></li>
@@ -60,12 +58,9 @@
 
         function cerrarChat() {
             Cookies.remove('token');
-            $("#contenedor-principal").load("widget-login.html");
+            window.location.href = "http://localhost:8081/";
         }
 
-        function widgetCanciones() {
-            $("#contenedor-principal").load("widget-canciones.html");
-        }
     </script>
 </div>
 

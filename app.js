@@ -97,7 +97,6 @@ app.use("/ofertas", routerUsuarioSession);
 app.use("/perfil", routerUsuarioSession);
 app.use("/oferta/comprar/**", routerUsuarioSession);
 app.use("/oferta/eliminar/*", routerUsuarioSession);
-app.use("/cliente.html", routerUsuarioSession);
 
 // routerSession
 let routerSession = express.Router();
